@@ -1,0 +1,4 @@
+rootProject.name = 'restAPI'
+include 'model'
+include 'persistence'
+
