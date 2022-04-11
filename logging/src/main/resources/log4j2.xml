@@ -13,8 +13,7 @@
                  filePattern="${LOG_FOLDER}/log-%d{yyyy_MM_dd HH.mm.ss} - %i.log" >
         <PatternLayout pattern="${pattern_file}"/>
         <Policies>
-            <TimeBasedTriggeringPolicy/>
-            <SizeBasedTriggeringPolicy size="100 KB" />
+            <SizeBasedTriggeringPolicy size="200 KB" />
         </Policies>
     </RollingFile>
 </Appenders>
