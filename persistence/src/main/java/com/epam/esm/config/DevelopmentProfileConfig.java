@@ -1,5 +1,4 @@
 package com.epam.esm.config;
-import com.epam.esm.repository.impl.TagRepositoryImpl;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -12,22 +11,20 @@ import javax.sql.DataSource;
 @Profile("dev")
 public class DevelopmentProfileConfig {
 
+    private static final String SCHEMA = "classpath:schema.sql";
+    private static final String START_DATA = "classpath:data.sql";
+
     @Bean
     public DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
-//                .addScript("classpath:schema.sql")
-                .addScript("classpath:data.sql")
+                .addScript(SCHEMA)
+                .addScript(START_DATA)
                 .build();
     }
 
     @Bean
     public JdbcTemplate jdbcTemplate(){
         return new JdbcTemplate(dataSource());
-    }
-
-    @Bean
-    public TagRepositoryImpl tagRepository(){
-        return new TagRepositoryImpl(jdbcTemplate());
     }
 }

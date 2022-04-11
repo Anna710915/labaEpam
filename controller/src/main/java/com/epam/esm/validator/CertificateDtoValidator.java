@@ -1,4 +1,4 @@
-package com.epam.esm.util;
+package com.epam.esm.validator;
 
 import com.epam.esm.dto.CertificateDto;
 import org.springframework.stereotype.Component;

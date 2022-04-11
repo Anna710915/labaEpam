@@ -1,2 +1,14 @@
-package com.epam.esm.config;public class ControllerConfig {
+package com.epam.esm.config;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+@Configuration
+@ComponentScan("com.epam.esm")
+@EnableWebMvc
+@Import({ServiceConfig.class, LoggingConfig.class})
+public class ControllerConfig {
+
 }

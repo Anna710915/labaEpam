@@ -1,52 +1,44 @@
 package com.epam.esm.repository.impl;
 
+import com.epam.esm.config.DevelopmentProfileConfig;
 import com.epam.esm.domain.Tag;
 import com.epam.esm.repository.TagRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.List;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-//@RunWith(SpringRunner.class)
-//@ContextConfiguration(
-////        loader = AnnotationConfigContextLoader.class,
-//        classes=DevelopmentProfileConfig.class)
-//@ActiveProfiles("dev")
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.Set;
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(
+        classes= DevelopmentProfileConfig.class)
+@ActiveProfiles("dev")
 class TagRepositoryImplTest {
 
-    private EmbeddedDatabase embeddedDatabase;
+    @Autowired
     private TagRepository tagRepository;
-
-    @BeforeEach
-    public void setUp() {
-        embeddedDatabase = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .addScript("schema.sql")
-                .addScript("classpath:data.sql")
-                .build();
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(embeddedDatabase);
-        tagRepository = new TagRepositoryImpl(jdbcTemplate);
-    }
-//    @Autowired
-//    private TagRepository tagRepository;
-
 
     @Test
     void create(){
-        tagRepository.create(new Tag("nckdnkcx"));
-        int expected = 5;
-        int actual = tagRepository.show().size();
+        long actual = tagRepository.create(new Tag("nckdnkcx"));
+        long expected = 5;
         assertEquals(expected, actual);
     }
 
     @Test
+    void tagNullTrue(){
+        Tag tag1 = new Tag();
+        Tag tag = tagRepository.showById(tag1.getId());
+        assertNull(tag);
+    }
+
+    @Test
     void show() {
-        List<Tag> actual = tagRepository.show();
+        Set<Tag> actual = tagRepository.show();
         assertNotNull(actual);
     }
 
@@ -66,8 +58,11 @@ class TagRepositoryImplTest {
         assertEquals(expected, actual);
     }
 
-    @AfterEach
-    public void tearDown() {
-        embeddedDatabase.shutdown();
+    @Test
+    void showByCertificateId(){
+        Set<Tag> tagSet = tagRepository.showByCertificateId(1);
+        int expected = 2;
+        int actual = tagSet.size();
+        assertEquals(expected, actual);
     }
 }

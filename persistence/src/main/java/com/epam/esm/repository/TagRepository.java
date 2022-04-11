@@ -1,13 +1,12 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.domain.Tag;
-
-import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 public interface TagRepository {
-    void create(Tag tag);
-    List<Tag> show();
+    long create(Tag tag);
+    Set<Tag> show();
     Tag showById(long id);
-    void delete(long id);
+    boolean delete(long id);
+    Set<Tag> showByCertificateId(long certificateId);
 }

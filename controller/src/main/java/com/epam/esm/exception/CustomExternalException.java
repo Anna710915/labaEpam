@@ -1,18 +1,18 @@
 package com.epam.esm.exception;
 
-public class CustomException extends RuntimeException{
-    public CustomException() {
+public class CustomExternalException extends RuntimeException{
+    public CustomExternalException() {
     }
 
-    public CustomException(String message) {
+    public CustomExternalException(String message) {
         super(message);
     }
 
-    public CustomException(String message, Throwable cause) {
+    public CustomExternalException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public CustomException(Throwable cause) {
+    public CustomExternalException(Throwable cause) {
         super(cause);
     }
 }
