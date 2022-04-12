@@ -8,6 +8,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
+/**
+ * The type Persistence configuration class is a production class
+ * which connects to the real database. The parameters of a connection
+ * is taken from the property file named "database.properties".
+ * @author Anna Merkul
+ */
 @Configuration
 @ComponentScan("com.epam.esm")
 @Profile("prod")
@@ -23,11 +29,25 @@ public class PersistenceConfiguration {
 
     private final Environment environment;
 
+    /**
+     * Instantiates a new Persistence configuration. The parameter representing the environment in which
+     * the current application is running. Models two key aspects of the application environment:
+     * profiles and properties. Methods related to property access are exposed via the PropertyResolver superinterface.
+     *
+     * @param environment the environment
+     */
     @Autowired
     public PersistenceConfiguration(Environment environment){
         this.environment = environment;
     }
 
+    /**
+     * Data source. DataSource is part of the JDBC specification and can be seen as a generalized connection factory.
+     * It allows a container or a framework to hide connection pooling and transaction management issues from the
+     * application code.
+     *
+     * @return the data source
+     */
     @Bean
     public DataSource dataSource(){
         BasicDataSource dataSource = new BasicDataSource();
@@ -40,6 +60,12 @@ public class PersistenceConfiguration {
         return dataSource;
     }
 
+    /**
+     * Jdbc template. This class provides simple access to a database through JDBC.
+     * the DataSource is injected via constructor injection.
+     *
+     * @return the jdbc template
+     */
     @Bean
     public JdbcTemplate jdbcTemplate(){
         return new JdbcTemplate(dataSource());

@@ -12,6 +12,12 @@ import org.springframework.stereotype.Repository;
 import java.sql.*;
 import java.util.List;
 
+/**
+ * The type Certificate repository implements methods of the CertificateRepository
+ * interface. The class is annotated with as a repository, which qualifies it to be
+ * automatically created by component-scanning.
+ * @author Anna Merkul.
+ */
 @Repository
 public class CertificateRepositoryImpl implements CertificateRepository {
 
@@ -81,6 +87,12 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     private final JdbcOperations jdbcOperations;
 
+    /**
+     * Instantiates a new Certificate repository. JdbcOperations is an interface
+     * which is implemented by JdbcTemplate class.
+     *
+     * @param jdbcOperations the jdbc operations
+     */
     @Autowired
     public CertificateRepositoryImpl(JdbcOperations jdbcOperations){
         this.jdbcOperations = jdbcOperations;

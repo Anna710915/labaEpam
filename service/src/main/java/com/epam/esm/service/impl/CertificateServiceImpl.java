@@ -17,12 +17,24 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * The type Certificate service implements methods of the CertificateService
+ * interface. The class is annotated as a service, which qualifies it to be
+ * automatically created by component-scanning.
+ * @author Anna Merkul
+ */
 @Service
 public class CertificateServiceImpl implements CertificateService {
 
     private final CertificateRepository certificateRepository;
     private final TagRepository tagRepository;
 
+    /**
+     * Instantiates a new Certificate service.
+     *
+     * @param certificateRepository the certificate repository
+     * @param tagRepository         the tag repository
+     */
     @Autowired
     public CertificateServiceImpl(CertificateRepository certificateRepository,
                                   TagRepository tagRepository){

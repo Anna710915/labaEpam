@@ -5,6 +5,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+/**
+ * The type Certificate dto validator. Checks data before using in a business logic layer.
+ * Annotated as a bean class which automatically scanning by configuration controller class.
+ * @author Anna Merkul
+ */
 @Component
 public class CertificateDtoValidator implements Validator {
 

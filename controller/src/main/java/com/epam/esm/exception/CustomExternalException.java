@@ -1,18 +1,16 @@
 package com.epam.esm.exception;
 
+/**
+ * The type Custom external exception class extends RuntimeException class.
+ * @author Anna Merkul
+ */
 public class CustomExternalException extends RuntimeException{
-    public CustomExternalException() {
-    }
-
+    /**
+     * Instantiates a new Custom external exception.
+     *
+     * @param message the message
+     */
     public CustomExternalException(String message) {
         super(message);
-    }
-
-    public CustomExternalException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public CustomExternalException(Throwable cause) {
-        super(cause);
     }
 }

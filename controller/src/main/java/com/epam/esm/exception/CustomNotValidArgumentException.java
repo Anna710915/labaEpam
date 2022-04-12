@@ -1,19 +1,17 @@
 package com.epam.esm.exception;
 
+/**
+ * The type Custom not valid argument exception extends RuntimeException class.
+ * @author Anna Merkul
+ */
 public class CustomNotValidArgumentException extends RuntimeException{
 
-    public CustomNotValidArgumentException() {
-    }
-
+    /**
+     * Instantiates a new Custom not valid argument exception.
+     *
+     * @param message the message
+     */
     public CustomNotValidArgumentException(String message) {
         super(message);
-    }
-
-    public CustomNotValidArgumentException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public CustomNotValidArgumentException(Throwable cause) {
-        super(cause);
     }
 }

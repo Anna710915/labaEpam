@@ -21,6 +21,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Controller is a rest controller which operates requests from clients and
+ * generates response in representational forms. Information exchanging are in a JSON
+ * forms.
+ * @author Anna Merkul
+ */
 @RestController
 @RequestMapping("/certificates")
 public class Controller{
@@ -30,6 +36,13 @@ public class Controller{
     private final TagService tagService;
     private final CertificateDtoValidator certificateDtoValidator;
 
+    /**
+     * Instantiates a new Controller.
+     *
+     * @param certificateService      the certificate service
+     * @param tagService              the tag service
+     * @param certificateDtoValidator the certificate dto validator
+     */
     @Autowired
     public Controller(CertificateService certificateService, TagService tagService, CertificateDtoValidator certificateDtoValidator){
         this.certificateService = certificateService;
@@ -37,6 +50,15 @@ public class Controller{
         this.certificateDtoValidator = certificateDtoValidator;
     }
 
+    /**
+     * Create response entity which contains certificate dto, the location of the created
+     * certificate and http status.
+     *
+     * @param builder        the builder
+     * @param certificateDto the certificate dto
+     * @param bindingResult  the binding result
+     * @return the response entity
+     */
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<CertificateDto> create(UriComponentsBuilder builder,
                                                  @RequestBody CertificateDto certificateDto,
@@ -59,11 +81,22 @@ public class Controller{
         return new ResponseEntity<>(certificateDto, headers, HttpStatus.CREATED);
     }
 
+    /**
+     * Show all list of certificates dto.
+     *
+     * @return the list
+     */
     @GetMapping(value = "/certificate", produces = "application/json")
     public List<CertificateDto> showAll(){
         return certificateService.showAll();
     }
 
+    /**
+     * Get tag.
+     *
+     * @param id the id
+     * @return the tag
+     */
     @GetMapping(value = "/tag/{id}")
     public Tag getTag(@PathVariable long id){
         Tag tag = tagService.showById(id);
@@ -73,11 +106,22 @@ public class Controller{
         return tag;
     }
 
+    /**
+     * Get tag list.
+     *
+     * @return the list
+     */
     @GetMapping(value = "/tag")
     public List<Tag> getTag(){
         return new ArrayList<>(tagService.showAll());
     }
 
+    /**
+     * Delete tag.
+     *
+     * @param id the id
+     * @return the list
+     */
     @DeleteMapping(value = "/tag/{id}")
     public List<Tag> deleteTag(@PathVariable long id){
         if(!tagService.delete(id)){
@@ -86,6 +130,12 @@ public class Controller{
         return new ArrayList<>(tagService.showAll());
     }
 
+    /**
+     * Delete certificate.
+     *
+     * @param id the id
+     * @return the list
+     */
     @DeleteMapping(value = "/certificate/{id}")
     public List<CertificateDto> deleteCertificate(@PathVariable long id){
         if(!certificateService.deleteCertificate(id)){
@@ -94,6 +144,12 @@ public class Controller{
         return certificateService.showAll();
     }
 
+    /**
+     * Get certificate with tags certificate dto.
+     *
+     * @param id the id
+     * @return the certificate dto
+     */
     @GetMapping(value = "/certificate/{id}")
     public CertificateDto getCertificateWithTags(@PathVariable long id){
         CertificateDto certificateDto = certificateService.showCertificateWithTags(id);
@@ -103,25 +159,44 @@ public class Controller{
         return certificateDto;
     }
 
+    /**
+     * Gets certificates by tag name.
+     *
+     * @param name the name
+     * @return the by tag name
+     */
     @GetMapping(value = "/certificate", params = "tag_name")
     public List<CertificateDto> getByTagName(@RequestParam("tag_name") String name){
         return certificateService.showByTagName(name);
     }
 
+    /**
+     * Search certificates list.
+     *
+     * @param part the part
+     * @return the list
+     */
     @GetMapping(value = "/certificate/search")
     public List<CertificateDto> searchCertificates(@RequestParam("part") String part){
         return certificateService.showByPartWord(part);
     }
 
+    /**
+     * Sort list certificate dto.
+     *
+     * @param name the name
+     * @param date the date
+     * @return the list
+     */
     @GetMapping(value = "/certificate/sort")
     public List<CertificateDto> sort(@RequestParam(value = "param_1", required = false) String name,
                                      @RequestParam(value = "param_2", required = false) String date){
         List<CertificateDto> certificateDtoList;
-        if(name != null && date != null){
+        if(name.equals("name") && date.equals("date")){
             certificateDtoList = certificateService.bothSort();
-        }else if(name != null){
+        }else if(name.equals("name")){
             certificateDtoList = certificateService.sortByName();
-        }else if(date != null){
+        }else if(date.equals("date")){
             certificateDtoList = certificateService.sortByDate();
         }else{
             certificateDtoList = certificateService.showAll();
@@ -129,6 +204,14 @@ public class Controller{
         return certificateDtoList;
     }
 
+    /**
+     * Update certificate certificate dto.
+     *
+     * @param id                the id
+     * @param updateCertificate the update certificate
+     * @param bindingResult     the binding result
+     * @return the certificate dto
+     */
     @PutMapping(value = "/certificate/{id}/update", consumes = "application/json")
     public CertificateDto updateCertificate(@PathVariable long id,
                                             @RequestBody CertificateDto updateCertificate,
@@ -144,24 +227,49 @@ public class Controller{
         return certificateDto;
     }
 
+    /**
+     * Not found custom error. Http status 404.
+     *
+     * @param e the e
+     * @return the custom error
+     */
     @ExceptionHandler(CustomNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public @ResponseBody CustomError notFound(CustomNotFoundException e) {
         return new CustomError(404, e.getMessage());
     }
 
+    /**
+     * External error custom error. Http status 422.
+     *
+     * @param e the e
+     * @return the custom error
+     */
     @ExceptionHandler(CustomNotValidArgumentException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public @ResponseBody CustomError externalError(CustomNotValidArgumentException e) {
         return new CustomError(422, e.getMessage());
     }
 
+    /**
+     * External error custom error. Http status 500.
+     *
+     * @param e the e
+     * @return the custom error
+     */
     @ExceptionHandler(CustomExternalException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public @ResponseBody CustomError externalError(CustomExternalException e) {
         return new CustomError(500, e.getMessage());
     }
 
+    /**
+     * External error custom error. Http status 400. It is a global
+     * exception.
+     *
+     * @param e the e
+     * @return the custom error
+     */
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody CustomError externalError(RuntimeException e) {

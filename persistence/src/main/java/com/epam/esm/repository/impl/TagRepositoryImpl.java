@@ -14,6 +14,12 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The type Tag repository implements methods of the TagRepository
+ * interface. The class is annotated with as a repository, which qualifies it to be
+ * automatically created by component-scanning.
+ * @author Anna Merkul.
+ */
 @Repository
 public class TagRepositoryImpl implements TagRepository {
     private static final String SQL_SELECT = "SELECT tag_id, name FROM tag";
@@ -30,6 +36,12 @@ public class TagRepositoryImpl implements TagRepository {
 
     private final JdbcOperations jdbcOperations;
 
+    /**
+     * Instantiates a new Tag repository. JdbcOperations is an interface
+     * which is implemented by JdbcTemplate class.
+     *
+     * @param jdbcOperations the jdbc operations
+     */
     @Autowired
     public TagRepositoryImpl(JdbcOperations jdbcOperations){
         this.jdbcOperations = jdbcOperations;

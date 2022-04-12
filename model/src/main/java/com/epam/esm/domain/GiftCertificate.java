@@ -3,6 +3,10 @@ package com.epam.esm.domain;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * The type Gift certificate. The entity class.
+ * @author Anna Merkul
+ */
 public class GiftCertificate {
 
     private long id;
@@ -13,8 +17,21 @@ public class GiftCertificate {
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateDate;
 
+    /**
+     * Instantiates a new Gift certificate.
+     */
     public GiftCertificate(){}
 
+    /**
+     * Instantiates a new Gift certificate.
+     *
+     * @param name           the name
+     * @param description    the description
+     * @param price          the price
+     * @param duration       the duration
+     * @param createDate     the create date
+     * @param lastUpdateDate the last update date
+     */
     public GiftCertificate(String name, String description, BigDecimal price,
                            int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate) {
         this.name = name;
@@ -25,6 +42,17 @@ public class GiftCertificate {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    /**
+     * Instantiates a new Gift certificate.
+     *
+     * @param id             the id
+     * @param name           the name
+     * @param description    the description
+     * @param price          the price
+     * @param duration       the duration
+     * @param createDate     the create date
+     * @param lastUpdateDate the last update date
+     */
     public GiftCertificate(long id, String name, String description, BigDecimal price,
                            int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate) {
         this.id = id;
@@ -36,58 +64,128 @@ public class GiftCertificate {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public long getId() {
         return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
     public void setId(long id) {
         this.id = id;
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets description.
+     *
+     * @return the description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Sets description.
+     *
+     * @param description the description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Gets price.
+     *
+     * @return the price
+     */
     public BigDecimal getPrice() {
         return price;
     }
 
+    /**
+     * Sets price.
+     *
+     * @param price the price
+     */
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
+    /**
+     * Gets duration.
+     *
+     * @return the duration
+     */
     public int getDuration() {
         return duration;
     }
 
+    /**
+     * Sets duration.
+     *
+     * @param duration the duration
+     */
     public void setDuration(int duration) {
         this.duration = duration;
     }
 
+    /**
+     * Gets create date.
+     *
+     * @return the create date
+     */
     public LocalDateTime getCreateDate() {
         return createDate;
     }
 
+    /**
+     * Sets create date.
+     *
+     * @param createDate the create date
+     */
     public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
+    /**
+     * Gets last update date.
+     *
+     * @return the last update date
+     */
     public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
+    /**
+     * Sets last update date.
+     *
+     * @param lastUpdateDate the last update date
+     */
     public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }

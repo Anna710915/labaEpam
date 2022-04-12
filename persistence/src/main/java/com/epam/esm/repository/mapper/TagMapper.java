@@ -6,8 +6,18 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * The type Tag mapper implements PowMapper class and used for mapping rows of the
+ * ResultSet.
+ */
 public class TagMapper implements RowMapper<Tag> {
+    /**
+     * The constant TAG_ID.
+     */
     public static final String TAG_ID = "tag_id";
+    /**
+     * The constant TAG_NAME.
+     */
     public static final String TAG_NAME = "name";
 
     @Override

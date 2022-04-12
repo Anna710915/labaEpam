@@ -8,11 +8,22 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+/**
+ * The type Tag service implements methods of the TagService
+ * interface. The class is annotated as a service, which qualifies it to be
+ * automatically created by component-scanning.
+ * @author Anna Merkul
+ */
 @Service
 public class TagServiceImpl implements TagService {
 
     private final TagRepository tagRepository;
 
+    /**
+     * Instantiates a new Tag service.
+     *
+     * @param tagRepository the tag repository
+     */
     @Autowired
     public TagServiceImpl(TagRepository tagRepository){
         this.tagRepository = tagRepository;
