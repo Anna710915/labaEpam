@@ -14,7 +14,7 @@ import org.springframework.validation.Validator;
 public class CertificateDtoValidator implements Validator {
 
     private static final String NAME_REGEXP = "[A-z0-9-\s'\"]{2,100}";
-    private static final String DESCRIPTION_REGEXP = "[^<>]+";
+    private static final String DESCRIPTION_REGEXP = "[<>]+";
 
     @Override
     public boolean supports(Class<?> clazz) {

@@ -247,7 +247,7 @@ public class Controller{
      */
     @ExceptionHandler(CustomNotValidArgumentException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public @ResponseBody CustomError externalError(CustomNotValidArgumentException e) {
+    public @ResponseBody CustomError unprocessableError(CustomNotValidArgumentException e) {
         return new CustomError(422, e.getMessage());
     }
 
@@ -270,9 +270,9 @@ public class Controller{
      * @param e the e
      * @return the custom error
      */
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public @ResponseBody CustomError externalError(RuntimeException e) {
+    public @ResponseBody CustomError badRequestError(Exception e) {
         return new CustomError(400, e.getMessage());
     }
 }

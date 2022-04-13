@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * The interface Certificate repository contains methods for certificates.
+ *
  * @author Anna Merkul
  */
 public interface CertificateRepository {
@@ -31,6 +32,14 @@ public interface CertificateRepository {
      * @return the gift certificate
      */
     GiftCertificate showById(long id);
+
+    /**
+     * Show by name gift certificate.
+     *
+     * @param name the name
+     * @return the gift certificate
+     */
+    GiftCertificate showByName(String name);
 
     /**
      * Update a certificate.

@@ -33,6 +33,11 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             create_date, last_update_date FROM gift_certificate
             WHERE gift_certificate_id=?
             """;
+    private static final String SQL_SELECT_BY_NAME = """
+            SELECT gift_certificate_id, name, description, price, duration,
+            create_date, last_update_date FROM gift_certificate
+            WHERE name=?
+            """;
     private static final String SQL_UPDATE = """
             UPDATE gift_certificate
             SET name=?, description=?, price=?, duration=?,
@@ -122,6 +127,14 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     @Override
     public GiftCertificate showById(long id) {
         return jdbcOperations.query(SQL_SELECT_BY_ID, new CertificateMapper(), id)
+                .stream()
+                .findAny()
+                .orElse(null);
+    }
+
+    @Override
+    public GiftCertificate showByName(String name) {
+        return  jdbcOperations.query(SQL_SELECT_BY_NAME, new CertificateMapper(), name)
                 .stream()
                 .findAny()
                 .orElse(null);

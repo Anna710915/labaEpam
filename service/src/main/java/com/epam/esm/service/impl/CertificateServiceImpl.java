@@ -46,6 +46,10 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public long create(CertificateDto certificateDto) {
         LocalDateTime localDateTime = LocalDateTime.now();
+        GiftCertificate uniqCertificate = certificateRepository.showByName(certificateDto.getName());
+        if(uniqCertificate != null){
+            throw new IllegalArgumentException("Certificate name is not uniq " + certificateDto.getName());
+        }
         GiftCertificate giftCertificate = new GiftCertificate(certificateDto.getName(),
                 certificateDto.getDescription(), certificateDto.getPrice(),
                 certificateDto.getDuration(), localDateTime, localDateTime);
@@ -99,6 +103,10 @@ public class CertificateServiceImpl implements CertificateService {
         GiftCertificate giftCertificate = certificateRepository.showById(id);
         if(giftCertificate == null){
             return null;
+        }
+        GiftCertificate uniqCertificate = certificateRepository.showByName(certificateDto.getName());
+        if(uniqCertificate != null && uniqCertificate.getId() != id){
+            throw new IllegalArgumentException("Certificate name is not uniq " + certificateDto.getName());
         }
         boolean modify = updateData(giftCertificate, certificateDto);
         if(modify){
