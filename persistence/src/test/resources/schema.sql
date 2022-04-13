@@ -1,3 +1,5 @@
+CREATE SCHEMA certificates;
+
 create table tag(
      tag_id bigint primary key auto_increment,
      name varchar(100)
