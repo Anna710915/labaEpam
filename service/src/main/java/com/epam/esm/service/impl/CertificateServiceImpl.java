@@ -58,17 +58,7 @@ public class CertificateServiceImpl implements CertificateService {
         if(certificateId < 0){
             return certificateId;
         }
-        for(Tag tag: tagSet){
-            if(tagRepository.showById(tag.getId()) == null){
-                long tagId = tagRepository.create(tag);
-                if(tagId < 0){
-                    throw new IllegalArgumentException("Tag is not created");
-                }
-                certificateRepository.insertKeys(tagId, certificateId);
-            }else {
-                certificateRepository.insertKeys(tag.getId(), certificateId);
-            }
-        }
+        createTagsAndInsertKeys(tagSet, certificateId);
         return certificateId;
     }
 
@@ -114,15 +104,8 @@ public class CertificateServiceImpl implements CertificateService {
         }
         certificateRepository.update(id, giftCertificate);
         Set<Tag> tagSet = certificateDto.getTagSet();
-        for(Tag tag: tagSet){
-            if(tagRepository.showById(tag.getId()) == null){
-                long tagId = tagRepository.create(tag);
-                if(tagId < 0){
-                    throw new IllegalArgumentException("Tag is not created");
-                }
-                certificateRepository.insertKeys(tagId, giftCertificate.getId());
-            }
-        }
+        createTagsAndInsertKeys(tagSet, giftCertificate.getId());
+        tagSet = tagRepository.showByCertificateId(giftCertificate.getId());
         return new CertificateDto(giftCertificate.getId(), giftCertificate.getName(), giftCertificate.getDescription(), giftCertificate.getPrice(),
                 giftCertificate.getDuration(), giftCertificate.getCreateDate(), giftCertificate.getLastUpdateDate(), tagSet);
     }
@@ -186,6 +169,18 @@ public class CertificateServiceImpl implements CertificateService {
             modify = true;
         }
         return modify;
+    }
+
+    private void createTagsAndInsertKeys(Set<Tag> tagSet, long certificateId){
+        for(Tag tag: tagSet){
+            if(tagRepository.showById(tag.getId()) == null){
+                long tagId = tagRepository.create(tag);
+                if(tagId < 0){
+                    throw new IllegalArgumentException("Tag is not created");
+                }
+                certificateRepository.insertKeys(tagId, certificateId);
+            }
+        }
     }
 
     private List<CertificateDto> certificateDtoListBuilder(List<GiftCertificate> giftCertificateList){
