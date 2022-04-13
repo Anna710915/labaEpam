@@ -29,6 +29,7 @@ import java.util.List;
 public class CertificateController {
 
     private static final String START_PATH = "/certificates/";
+    private static final String EXCEPTION_MASSAGE_CERTIFICATE = "Gift Certificate is not found by id = ";
     private final CertificateService certificateService;
     private final TagService tagService;
     private final CertificateDtoValidator certificateDtoValidator;
@@ -99,7 +100,7 @@ public class CertificateController {
     @DeleteMapping(value = "/certificate/{id}")
     public List<CertificateDto> deleteCertificate(@PathVariable long id){
         if(!certificateService.deleteCertificate(id)){
-            throw new CustomNotFoundException("Gift Certificate is not found by id = " + id);
+            throw new CustomNotFoundException( EXCEPTION_MASSAGE_CERTIFICATE + id);
         }
         return certificateService.showAll();
     }
@@ -114,7 +115,7 @@ public class CertificateController {
     public CertificateDto getCertificateWithTags(@PathVariable long id){
         CertificateDto certificateDto = certificateService.showCertificateWithTags(id);
         if(certificateDto == null) {
-            throw  new CustomNotFoundException("Gift Certificate is not found by id = " + id);
+            throw  new CustomNotFoundException(EXCEPTION_MASSAGE_CERTIFICATE + id);
         }
         return certificateDto;
     }
@@ -182,10 +183,9 @@ public class CertificateController {
         }
         CertificateDto certificateDto = certificateService.update(updateCertificate, id);
         if(certificateDto == null){
-            throw new CustomNotFoundException("Gift Certificate is not found by id = " + id);
+            throw new CustomNotFoundException(EXCEPTION_MASSAGE_CERTIFICATE + id);
         }
         return certificateDto;
     }
-
 
 }

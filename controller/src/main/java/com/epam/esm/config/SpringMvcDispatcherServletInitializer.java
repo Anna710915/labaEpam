@@ -12,9 +12,11 @@ import javax.servlet.ServletException;
  * @author Anna Merkul
  */
 public class SpringMvcDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return null;
+        return new Class[0];
     }
 
     @Override

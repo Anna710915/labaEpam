@@ -25,7 +25,7 @@ public class CertificateDtoValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         CertificateDto certificateDto = (CertificateDto) target;
-        if(BlankOrEmpty(certificateDto.getName()) || !certificateDto.getName().matches(NAME_REGEXP)){
+        if(blankOrEmpty(certificateDto.getName()) || !certificateDto.getName().matches(NAME_REGEXP)){
             errors.rejectValue("name", "The name should contain letters, digits, [-'\"] or some space and should not be empty");
         }
         if(certificateDto.getDescription() != null &&
@@ -41,7 +41,7 @@ public class CertificateDtoValidator implements Validator {
         }
     }
 
-    private boolean BlankOrEmpty(String line){
+    private boolean blankOrEmpty(String line){
         return line == null || line.isBlank();
     }
 }

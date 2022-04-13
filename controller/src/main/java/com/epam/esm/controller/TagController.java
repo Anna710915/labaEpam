@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/certificates")
 public class TagController {
 
+    private static final String EXCEPTION_MESSAGE_TAG = "Tag is not found by id = ";
     private final TagService tagService;
 
     /**
@@ -39,7 +40,7 @@ public class TagController {
     public Tag getTag(@PathVariable long id){
         Tag tag = tagService.showById(id);
         if(tag == null) {
-            throw  new CustomNotFoundException("Tag is not found by id = " + id);
+            throw  new CustomNotFoundException(EXCEPTION_MESSAGE_TAG + id);
         }
         return tag;
     }
@@ -63,7 +64,7 @@ public class TagController {
     @DeleteMapping(value = "/tag/{id}")
     public List<Tag> deleteTag(@PathVariable long id){
         if(!tagService.delete(id)){
-            throw new CustomNotFoundException("Tag is not found by id = " + id);
+            throw new CustomNotFoundException(EXCEPTION_MESSAGE_TAG + id);
         }
         return new ArrayList<>(tagService.showAll());
     }
