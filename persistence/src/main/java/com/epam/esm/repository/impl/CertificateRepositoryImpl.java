@@ -81,6 +81,9 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     private static final String SQL_INSERT_GENERATED_KEYS = """
             INSERT INTO tags_gift_certificates(tag_id, gift_certificate_id)
             VALUES (?,?)""";
+    private static final String SQL_DELETE_KEYS = """
+            DELETE FROM tags_gift_certificates
+            WHERE tag_id=? AND gift_certificate_id=?""";
     private static final String SQL_BOTH_SORTING = """
             SELECT gift_certificate_id, name, description, price, duration,
             create_date, last_update_date FROM gift_certificate
@@ -204,5 +207,10 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     @Override
     public boolean insertKeys(long tagId, long certificateId) {
         return jdbcOperations.update(SQL_INSERT_GENERATED_KEYS, tagId, certificateId) > RETURN_ROW_VALUE;
+    }
+
+    @Override
+    public boolean deleteKeys(long tagId, long certificateId) {
+        return jdbcOperations.update(SQL_DELETE_KEYS, tagId, certificateId) == RETURN_ROW_VALUE;
     }
 }

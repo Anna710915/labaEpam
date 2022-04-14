@@ -136,4 +136,10 @@ class CertificateRepositoryImplTest {
         boolean actual = certificateRepository.insertKeys(4, 1);
         assertFalse(actual);
     }
+
+    @Test
+    void deleteKeys(){
+        boolean actual = certificateRepository.deleteKeys(1, 2);
+        assertTrue(actual);
+    }
 }

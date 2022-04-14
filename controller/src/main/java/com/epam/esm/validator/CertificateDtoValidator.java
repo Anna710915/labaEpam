@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * The type Certificate dto validator. Checks data before using in a business logic layer.
  * Annotated as a bean class which automatically scanning by configuration controller class.
@@ -13,7 +16,7 @@ import org.springframework.validation.Validator;
 @Component
 public class CertificateDtoValidator implements Validator {
 
-    private static final String NAME_REGEXP = "[A-z0-9-\s'\"]{2,100}";
+    private static final String NAME_REGEXP = "[\\w\\p{Blank}А-Яа-я]{2,100}";
     private static final String DESCRIPTION_REGEXP = "[<>]+";
 
     @Override
@@ -25,7 +28,9 @@ public class CertificateDtoValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         CertificateDto certificateDto = (CertificateDto) target;
-        if(blankOrEmpty(certificateDto.getName()) || !certificateDto.getName().matches(NAME_REGEXP)){
+        Pattern pattern = Pattern.compile(NAME_REGEXP, Pattern.UNICODE_CHARACTER_CLASS);
+        Matcher matcher = pattern.matcher(certificateDto.getName());
+        if(!matcher.matches()){
             errors.rejectValue("name", "The name should contain letters, digits, [-'\"] or some space and should not be empty");
         }
         if(certificateDto.getDescription() != null &&
@@ -39,9 +44,5 @@ public class CertificateDtoValidator implements Validator {
         if(certificateDto.getDuration() < 0 || certificateDto.getDuration() > 365){
             errors.rejectValue("duration", "The duration range between 0 and 365 days");
         }
-    }
-
-    private boolean blankOrEmpty(String line){
-        return line == null || line.isBlank();
     }
 }

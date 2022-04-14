@@ -5,7 +5,6 @@ import com.epam.esm.exception.CustomExternalException;
 import com.epam.esm.exception.CustomNotFoundException;
 import com.epam.esm.exception.CustomNotValidArgumentException;
 import com.epam.esm.service.CertificateService;
-import com.epam.esm.service.TagService;
 import com.epam.esm.validator.CertificateDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,20 +30,17 @@ public class CertificateController {
     private static final String START_PATH = "/certificates/";
     private static final String EXCEPTION_MASSAGE_CERTIFICATE = "Gift Certificate is not found by id = ";
     private final CertificateService certificateService;
-    private final TagService tagService;
     private final CertificateDtoValidator certificateDtoValidator;
 
     /**
      * Instantiates a new Controller.
      *
      * @param certificateService      the certificate service
-     * @param tagService              the tag service
      * @param certificateDtoValidator the certificate dto validator
      */
     @Autowired
-    public CertificateController(CertificateService certificateService, TagService tagService, CertificateDtoValidator certificateDtoValidator){
+    public CertificateController(CertificateService certificateService, CertificateDtoValidator certificateDtoValidator){
         this.certificateService = certificateService;
-        this.tagService = tagService;
         this.certificateDtoValidator = certificateDtoValidator;
     }
 
@@ -153,11 +149,11 @@ public class CertificateController {
     public List<CertificateDto> sort(@RequestParam(value = "param_1", required = false) String name,
                                      @RequestParam(value = "param_2", required = false) String date){
         List<CertificateDto> certificateDtoList;
-        if(name.equals("name") && date.equals("date")){
+        if(name != null && date != null && name.equals("name") && date.equals("date")){
             certificateDtoList = certificateService.bothSort();
-        }else if(name.equals("name")){
+        }else if(name != null && name.equals("name")){
             certificateDtoList = certificateService.sortByName();
-        }else if(date.equals("date")){
+        }else if(date != null && date.equals("date")){
             certificateDtoList = certificateService.sortByDate();
         }else{
             certificateDtoList = certificateService.showAll();

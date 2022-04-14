@@ -125,4 +125,13 @@ public interface CertificateRepository {
      * @return the boolean
      */
     boolean insertKeys(long tagId, long certificateId);
+
+    /**
+     * Delete keys boolean.
+     *
+     * @param tagId         the tag id
+     * @param certificateId the certificate id
+     * @return the boolean
+     */
+    boolean deleteKeys(long tagId, long certificateId);
 }
