@@ -67,20 +67,12 @@ public interface CertificateRepository {
     List<GiftCertificate> showByTagName(String name);
 
     /**
-     * Show by part name the list of certificates.
+     * Show by part name or description the list of certificates.
      *
      * @param partName the part name
      * @return the list
      */
-    List<GiftCertificate> showByPartName(String partName);
-
-    /**
-     * Show by part description the list of certificates.
-     *
-     * @param partDescription the part description
-     * @return the list
-     */
-    List<GiftCertificate> showByPartDescription(String partDescription);
+    List<GiftCertificate> showByPartNameOrDescription(String partName);
 
     /**
      * Sort by date asc the list of certificates.

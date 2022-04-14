@@ -62,14 +62,10 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             create_date, last_update_date FROM gift_certificate
             ORDER BY create_date DESC
             """;
-    private static final String SQL_SELECT_BY_PART_NAME = """
+    private static final String SQL_SELECT_BY_PART_NAME_DESCRIPTION = """
             SELECT gift_certificate_id, name, description, price, duration,
             create_date, last_update_date FROM gift_certificate
             WHERE name LIKE '%""";
-    private static final String SQL_SELECT_BY_PART_DESCRIPTION = """
-            SELECT gift_certificate_id, name, description, price, duration,
-            create_date, last_update_date FROM gift_certificate
-            WHERE description LIKE '%""";
     private static final String SQL_SORT_ASC_BY_NAME = """
             SELECT gift_certificate_id, name, description, price, duration,
             create_date, last_update_date FROM gift_certificate
@@ -89,6 +85,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             create_date, last_update_date FROM gift_certificate
             ORDER BY name, create_date;
             """;
+    private static final String DESCRIPTION_PART = "%' OR description LIKE '%";
     private static final String END_PART = "%'";
     private static final long RETURN_VALUE = -1L;
     private static final int RETURN_ROW_VALUE = 1;
@@ -166,16 +163,9 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     @Override
-    public List<GiftCertificate> showByPartName(String partName) {
-        StringBuilder builder = new StringBuilder(SQL_SELECT_BY_PART_NAME);
-        builder.append(partName).append(END_PART);
-        return jdbcOperations.query(builder.toString(), new CertificateMapper());
-    }
-
-    @Override
-    public List<GiftCertificate> showByPartDescription(String partDescription) {
-        StringBuilder builder = new StringBuilder(SQL_SELECT_BY_PART_DESCRIPTION);
-        builder.append(partDescription).append(END_PART);
+    public List<GiftCertificate> showByPartNameOrDescription(String partName) {
+        StringBuilder builder = new StringBuilder(SQL_SELECT_BY_PART_NAME_DESCRIPTION);
+        builder.append(partName).append(DESCRIPTION_PART).append(partName).append(END_PART);
         return jdbcOperations.query(builder.toString(), new CertificateMapper());
     }
 

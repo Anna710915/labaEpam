@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The type Certificate service implements methods of the CertificateService
@@ -89,27 +88,24 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public  CertificateDto update(CertificateDto certificateDto, long id) {
+    public boolean update(CertificateDto certificateDto, long id) {
         GiftCertificate giftCertificate = certificateRepository.showById(id);
         if(giftCertificate == null){
-            return null;
+            return false;
         }
         GiftCertificate uniqCertificate = certificateRepository.showByName(certificateDto.getName());
         if(uniqCertificate != null && uniqCertificate.getId() != id){
             throw new IllegalArgumentException("Certificate name is not uniq " + certificateDto.getName());
         }
-        if(updateData(giftCertificate, certificateDto)){
-            giftCertificate.setLastUpdateDate(LocalDateTime.now());
-        }
-        certificateRepository.update(id, giftCertificate);
         Set<Tag> oldTagSet = tagRepository.showByCertificateId(id);
         Set<Tag> updateTagSet = certificateDto.getTagSet();
-        deleteTagsForCertificate(oldTagSet, updateTagSet, id);
+        boolean isDelete = deleteTagsForCertificate(oldTagSet, updateTagSet, id);
         Set<Tag> insertTags = collectNewTags(oldTagSet, updateTagSet);
+        if(updateData(giftCertificate, certificateDto) || !insertTags.isEmpty() || isDelete){
+            giftCertificate.setLastUpdateDate(LocalDateTime.now());
+        }
         createTagsAndInsertKeys(insertTags, giftCertificate.getId());
-        updateTagSet = tagRepository.showByCertificateId(id);
-        return new CertificateDto(giftCertificate.getId(), giftCertificate.getName(), giftCertificate.getDescription(), giftCertificate.getPrice(),
-                giftCertificate.getDuration(), giftCertificate.getCreateDate(), giftCertificate.getLastUpdateDate(), updateTagSet);
+        return certificateRepository.update(id, giftCertificate);
     }
 
 
@@ -121,12 +117,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public List<CertificateDto> showByPartWord(String partWord) {
-        List<GiftCertificate> listByPartName = certificateRepository.showByPartName(partWord);
-        List<GiftCertificate> listByPartDescription = certificateRepository.showByPartDescription(partWord);
-        Set<GiftCertificate> setCommon = Stream.of(listByPartName, listByPartDescription)
-                .flatMap(List :: stream)
-                .collect(Collectors.toSet());
-        return certificateDtoListBuilder(new ArrayList<>(setCommon));
+        List<GiftCertificate> listByPartName = certificateRepository.showByPartNameOrDescription(partWord);
+        return certificateDtoListBuilder(listByPartName);
     }
 
     @Override
@@ -173,13 +165,16 @@ public class CertificateServiceImpl implements CertificateService {
         return modify;
     }
 
-    private void deleteTagsForCertificate(Set<Tag> oldTags, Set<Tag> updateTags, long certificateId){
+    private boolean deleteTagsForCertificate(Set<Tag> oldTags, Set<Tag> updateTags, long certificateId){
+        boolean isDelete = false;
         Set<Tag> deleteTagsKey = oldTags.stream()
                 .filter(tag -> !updateTags.contains(tag))
                 .collect(Collectors.toSet());
         for(Tag tag : deleteTagsKey){
+            isDelete = true;
             certificateRepository.deleteKeys(tag.getId(), certificateId);
         }
+        return isDelete;
     }
 
     private Set<Tag> collectNewTags(Set<Tag> oldTags, Set<Tag> updateTags){

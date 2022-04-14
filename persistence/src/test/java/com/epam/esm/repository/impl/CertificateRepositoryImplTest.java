@@ -74,18 +74,10 @@ class CertificateRepositoryImplTest {
     }
 
     @Test
-    void showByPartName() {
-        List<GiftCertificate> giftCertificateList = certificateRepository.showByPartName("IK");
+    void showByPartNameOrDescription() {
+        List<GiftCertificate> giftCertificateList = certificateRepository.showByPartNameOrDescription("IK");
         String expected = "ZIKO";
         String actual = giftCertificateList.get(0).getName();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void showByPartDescription() {
-        List<GiftCertificate> giftCertificateList = certificateRepository.showByPartDescription("dcd");
-        int expected = 1;
-        int actual = giftCertificateList.size();
         assertEquals(expected, actual);
     }
 
