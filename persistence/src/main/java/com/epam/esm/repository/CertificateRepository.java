@@ -110,13 +110,20 @@ public interface CertificateRepository {
     List<GiftCertificate> bothSorting();
 
     /**
-     * Insert keys of certificate and tag id.
+     * Insert tags for certificate boolean.
      *
-     * @param tagId         the tag id
+     * @param tagName       the tag name
      * @param certificateId the certificate id
-     * @return the boolean
      */
-    boolean insertKeys(long tagId, long certificateId);
+    void insertTagsForCertificate(String tagName, long certificateId);
+
+    /**
+     * Update tags for certificate.
+     *
+     * @param tagName       the tag name
+     * @param certificateId the certificate id
+     */
+    void updateTagsForCertificate(String tagName, long certificateId);
 
     /**
      * Delete keys boolean.
