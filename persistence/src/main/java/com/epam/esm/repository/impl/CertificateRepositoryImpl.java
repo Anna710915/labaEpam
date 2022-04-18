@@ -197,14 +197,12 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     @Override
     public void insertTagsForCertificate(String tagName, long certificateId) {
-        int x = jdbcOperations.update(SQL_INSERT_CERTIFICATE_TAGS_PROCEDURE, certificateId, tagName);
-        System.out.println(x);
+        jdbcOperations.update(SQL_INSERT_CERTIFICATE_TAGS_PROCEDURE, certificateId, tagName);
     }
 
     @Override
     public void updateTagsForCertificate(String tagName, long certificateId) {
-        int x = jdbcOperations.update(SQL_UPDATE_CERTIFICATE_TAGS_PROCEDURE, certificateId, tagName);
-        System.out.println(x);
+        jdbcOperations.update(SQL_UPDATE_CERTIFICATE_TAGS_PROCEDURE, certificateId, tagName);
     }
 
     @Override
