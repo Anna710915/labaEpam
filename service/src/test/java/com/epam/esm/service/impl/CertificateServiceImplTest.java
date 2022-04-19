@@ -123,7 +123,7 @@ class CertificateServiceImplTest {
         GiftCertificate giftCertificate = new GiftCertificate(2L, "ba", "bb", BigDecimal.valueOf(2), 5,
                 LocalDateTime.of(2021, 5, 4, 12, 12, 12),
                 LocalDateTime.of(2022, 2, 3, 14,15,16));
-        Mockito.when(mockCertificateRepository.showByPartName("b")).thenReturn(List.of(giftCertificate));
+        Mockito.when(mockCertificateRepository.showByPartNameOrDescription("b")).thenReturn(List.of(giftCertificate));
         Mockito.when(mockTagRepository.showByCertificateId(2L)).thenReturn(Set.of(new Tag("#dislike"), new Tag("sea")));
         List<CertificateDto> actual = certificateService.showByPartWord("b");
         assertEquals(expected, actual);

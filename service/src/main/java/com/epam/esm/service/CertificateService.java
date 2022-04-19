@@ -38,9 +38,9 @@ public interface CertificateService {
      *
      * @param newDto the new dto
      * @param id     the id
-     * @return the certificate dto
+     * @return the boolean
      */
-    CertificateDto update(CertificateDto newDto, long id);
+    boolean update(CertificateDto newDto, long id);
 
     /**
      * Show by tag name list certificates with tags.

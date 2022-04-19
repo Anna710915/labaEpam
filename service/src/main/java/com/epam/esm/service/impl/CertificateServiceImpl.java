@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The type Certificate service implements methods of the CertificateService
@@ -53,12 +52,11 @@ public class CertificateServiceImpl implements CertificateService {
         GiftCertificate giftCertificate = new GiftCertificate(certificateDto.getName(),
                 certificateDto.getDescription(), certificateDto.getPrice(),
                 certificateDto.getDuration(), localDateTime, localDateTime);
-        Set<Tag> tagSet = certificateDto.getTagSet();
+        Set<Tag> tags = certificateDto.getTagSet();
         long certificateId = certificateRepository.create(giftCertificate);
-        if(certificateId < 0){
-            return certificateId;
+        for(Tag tag : tags){
+            certificateRepository.insertTagsForCertificate(tag.getName(), certificateId);
         }
-        createTagsAndInsertKeys(tagSet, certificateId);
         return certificateId;
     }
 
@@ -89,25 +87,26 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public  CertificateDto update(CertificateDto certificateDto, long id) {
+    public boolean update(CertificateDto certificateDto, long id) {
         GiftCertificate giftCertificate = certificateRepository.showById(id);
         if(giftCertificate == null){
-            return null;
+            return false;
         }
         GiftCertificate uniqCertificate = certificateRepository.showByName(certificateDto.getName());
         if(uniqCertificate != null && uniqCertificate.getId() != id){
             throw new IllegalArgumentException("Certificate name is not uniq " + certificateDto.getName());
         }
-        boolean modify = updateData(giftCertificate, certificateDto);
-        if(modify){
+        Set<Tag> oldTags = tagRepository.showByCertificateId(id);
+        Set<Tag> updateTags = certificateDto.getTagSet();
+        boolean isDelete = deleteTagsForCertificate(oldTags, updateTags, id);
+        if(updateData(giftCertificate, certificateDto) || !updateTags.isEmpty() || isDelete){
             giftCertificate.setLastUpdateDate(LocalDateTime.now());
         }
-        certificateRepository.update(id, giftCertificate);
-        Set<Tag> tagSet = certificateDto.getTagSet();
-        createTagsAndInsertKeys(tagSet, giftCertificate.getId());
-        tagSet = tagRepository.showByCertificateId(giftCertificate.getId());
-        return new CertificateDto(giftCertificate.getId(), giftCertificate.getName(), giftCertificate.getDescription(), giftCertificate.getPrice(),
-                giftCertificate.getDuration(), giftCertificate.getCreateDate(), giftCertificate.getLastUpdateDate(), tagSet);
+        boolean isCertificateUpdate = certificateRepository.update(id, giftCertificate);
+        for(Tag tag: updateTags) {
+            certificateRepository.updateTagsForCertificate(tag.getName(), giftCertificate.getId());
+        }
+        return isCertificateUpdate;
     }
 
 
@@ -119,12 +118,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public List<CertificateDto> showByPartWord(String partWord) {
-        List<GiftCertificate> listByPartName = certificateRepository.showByPartName(partWord);
-        List<GiftCertificate> listByPartDescription = certificateRepository.showByPartDescription(partWord);
-        List<GiftCertificate> listCommon = Stream.of(listByPartName, listByPartDescription)
-                .flatMap(List :: stream)
-                .collect(Collectors.toList());
-        return certificateDtoListBuilder(listCommon);
+        List<GiftCertificate> listByPartName = certificateRepository.showByPartNameOrDescription(partWord);
+        return certificateDtoListBuilder(listByPartName);
     }
 
     @Override
@@ -171,16 +166,16 @@ public class CertificateServiceImpl implements CertificateService {
         return modify;
     }
 
-    private void createTagsAndInsertKeys(Set<Tag> tagSet, long certificateId){
-        for(Tag tag: tagSet){
-            if(tagRepository.showById(tag.getId()) == null){
-                long tagId = tagRepository.create(tag);
-                if(tagId < 0){
-                    throw new IllegalArgumentException("Tag is not created");
-                }
-                certificateRepository.insertKeys(tagId, certificateId);
-            }
+    private boolean deleteTagsForCertificate(Set<Tag> oldTags, Set<Tag> updateTags, long certificateId){
+        boolean isDelete = false;
+        Set<Tag> deleteTagsKey = oldTags.stream()
+                .filter(tag -> !updateTags.contains(tag))
+                .collect(Collectors.toSet());
+        for(Tag tag : deleteTagsKey){
+            isDelete = true;
+            certificateRepository.deleteKeys(tag.getId(), certificateId);
         }
+        return isDelete;
     }
 
     private List<CertificateDto> certificateDtoListBuilder(List<GiftCertificate> giftCertificateList){

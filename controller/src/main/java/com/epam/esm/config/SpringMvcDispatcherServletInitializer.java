@@ -1,7 +1,9 @@
 package com.epam.esm.config;
 
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
@@ -35,5 +37,10 @@ public class SpringMvcDispatcherServletInitializer extends AbstractAnnotationCon
         aServletContext.setInitParameter("spring.profiles.active", "prod");
     }
 
-
+    @Override
+    protected Filter[] getServletFilters() {
+        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        return new Filter[] { characterEncodingFilter};
+    }
 }

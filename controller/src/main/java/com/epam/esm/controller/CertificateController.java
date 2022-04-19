@@ -5,7 +5,6 @@ import com.epam.esm.exception.CustomExternalException;
 import com.epam.esm.exception.CustomNotFoundException;
 import com.epam.esm.exception.CustomNotValidArgumentException;
 import com.epam.esm.service.CertificateService;
-import com.epam.esm.service.TagService;
 import com.epam.esm.validator.CertificateDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,22 +28,21 @@ import java.util.List;
 public class CertificateController {
 
     private static final String START_PATH = "/certificates/";
+    private static final String SORT_NAME = "name";
+    private static final String SORT_DATE = "date";
     private static final String EXCEPTION_MASSAGE_CERTIFICATE = "Gift Certificate is not found by id = ";
     private final CertificateService certificateService;
-    private final TagService tagService;
     private final CertificateDtoValidator certificateDtoValidator;
 
     /**
      * Instantiates a new Controller.
      *
      * @param certificateService      the certificate service
-     * @param tagService              the tag service
      * @param certificateDtoValidator the certificate dto validator
      */
     @Autowired
-    public CertificateController(CertificateService certificateService, TagService tagService, CertificateDtoValidator certificateDtoValidator){
+    public CertificateController(CertificateService certificateService, CertificateDtoValidator certificateDtoValidator){
         this.certificateService = certificateService;
-        this.tagService = tagService;
         this.certificateDtoValidator = certificateDtoValidator;
     }
 
@@ -153,11 +151,11 @@ public class CertificateController {
     public List<CertificateDto> sort(@RequestParam(value = "param_1", required = false) String name,
                                      @RequestParam(value = "param_2", required = false) String date){
         List<CertificateDto> certificateDtoList;
-        if(name.equals("name") && date.equals("date")){
+        if(SORT_NAME.equals(name) && SORT_DATE.equals(date)){
             certificateDtoList = certificateService.bothSort();
-        }else if(name.equals("name")){
+        }else if(SORT_NAME.equals(name)){
             certificateDtoList = certificateService.sortByName();
-        }else if(date.equals("date")){
+        }else if(SORT_DATE.equals(date)){
             certificateDtoList = certificateService.sortByDate();
         }else{
             certificateDtoList = certificateService.showAll();
@@ -181,11 +179,11 @@ public class CertificateController {
         if(bindingResult.hasErrors()){
             throw new CustomNotValidArgumentException(bindingResult.toString());
         }
-        CertificateDto certificateDto = certificateService.update(updateCertificate, id);
-        if(certificateDto == null){
+        boolean result = certificateService.update(updateCertificate, id);
+        if(!result){
             throw new CustomNotFoundException(EXCEPTION_MASSAGE_CERTIFICATE + id);
         }
-        return certificateDto;
+        return certificateService.showCertificateWithTags(id);
     }
 
 }
