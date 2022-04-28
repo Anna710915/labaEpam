@@ -1,6 +1,6 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.CertificateDto;
+import com.epam.esm.model.dto.CertificateDto;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

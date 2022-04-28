@@ -1,7 +1,12 @@
-rootProject.name = 'restAPI'
-include 'model'
-include 'persistence'
-include 'service'
+pluginManagement {
+	repositories {
+		maven { url 'https://repo.spring.io/milestone' }
+		maven { url 'https://repo.spring.io/snapshot' }
+		gradlePluginPortal()
+	}
+}
+rootProject.name = 'esm'
 include 'controller'
 include 'logging'
-
+include 'api'
+include 'core'
