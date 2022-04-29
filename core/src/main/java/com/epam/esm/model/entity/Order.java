@@ -24,11 +24,11 @@ public class Order {
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderCertificate> orderCertificates = new ArrayList<>();
 
     public Order(){}

@@ -6,6 +6,7 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public List<TagDto> showAll(int limit, int offset) {
         List<Tag> tags = tagRepository.show(limit, offset);
         return buildListTagDto(tags);
@@ -43,6 +45,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public TagDto showById(long id) {
         Tag tag = tagRepository.showById(id);
         TagDto tagDto = new TagDto();
@@ -52,6 +55,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public List<TagDto> showWidelyUserTagWithHighestOrdersCost() {
         List<Tag> tags = tagRepository.findWidelyUserTagWithHighestOrdersCost();
         return buildListTagDto(tags);

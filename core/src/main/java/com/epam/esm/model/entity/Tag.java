@@ -24,7 +24,7 @@ public class Tag {
     @Column
     private String name;
 
-    @ManyToMany(mappedBy = "tags", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "tags", cascade = CascadeType.ALL)
     private List<GiftCertificate> giftCertificates = new ArrayList<>();
 
     /**

@@ -70,12 +70,14 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
+    @Transactional
     public List<CertificateDto> showAll(int limit, int offset) {
         List<GiftCertificate> giftCertificateList = certificateRepository.show(limit, offset);
         return certificateDtoListBuilder(giftCertificateList);
     }
 
     @Override
+    @Transactional
     public CertificateDto showCertificateWithTags(long id) {
         GiftCertificate giftCertificate = certificateRepository.showById(id);
         CertificateDto certificateDto = new CertificateDto();
@@ -122,36 +124,42 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
+    @Transactional
     public List<CertificateDto> showByTagName(int limit, int offset, String tagName) {
         List<GiftCertificate> giftCertificateList = certificateRepository.showByTagName(limit, offset, tagName);
         return certificateDtoListBuilder(giftCertificateList);
     }
 
     @Override
+    @Transactional
     public List<CertificateDto> showByPartWord(int limit, int offset, String partWord) {
         List<GiftCertificate> listByPartName = certificateRepository.showByPartNameOrDescription(limit, offset, partWord);
         return certificateDtoListBuilder(listByPartName);
     }
 
     @Override
+    @Transactional
     public List<CertificateDto> sortByName(int limit, int offset) {
         List<GiftCertificate> giftCertificateList = certificateRepository.sortByNameAsc(limit, offset);
         return certificateDtoListBuilder(giftCertificateList);
     }
 
     @Override
+    @Transactional
     public List<CertificateDto> sortByDate(int limit, int offset) {
         List<GiftCertificate> giftCertificateList = certificateRepository.sortByDateAsc(limit, offset);
         return certificateDtoListBuilder(giftCertificateList);
     }
 
     @Override
+    @Transactional
     public List<CertificateDto> bothSort(int limit, int offset) {
         List<GiftCertificate> giftCertificateList = certificateRepository.bothSorting(limit, offset);
         return certificateDtoListBuilder(giftCertificateList);
     }
 
     @Override
+    @Transactional
     public List<CertificateDto> findCertificatesByQuery(int limit, int offset, String query) {
         String[] tags = query.split(REGEX_COMMA);
         List<String> filterTags = filterExistingTags(tags);

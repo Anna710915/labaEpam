@@ -44,7 +44,7 @@ public class GiftCertificate {
     @OneToMany(mappedBy = "giftCertificate", cascade = CascadeType.ALL)
     private List<OrderCertificate> orderCertificates = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "tags_gift_certificates",
                 joinColumns = @JoinColumn(name = "gift_certificate_id"),
                 inverseJoinColumns = @JoinColumn(name = "tag_id"))

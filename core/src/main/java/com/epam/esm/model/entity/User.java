@@ -19,7 +19,7 @@ public class User {
     @Column(name = "username")
     private String username;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
 
     public User(){}

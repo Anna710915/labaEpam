@@ -44,12 +44,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public List<OrderDto> findPaginatedUserOrders(long userId, int size, int offset) {
         List<Order> orders = orderRepository.selectPaginatedUserOrders(userId, size, offset);
         return buildOrderDtoList(orders);
     }
 
     @Override
+    @Transactional
     public OrderDto findUserOrder(long orderId) {
         Order order = orderRepository.findUserOrder(orderId);
         OrderDto orderDto = new OrderDto();
@@ -85,6 +87,7 @@ public class OrderServiceImpl implements OrderService {
         for(OrderCertificate orderCertificate : orderCertificates){
             OrderComponentDto orderComponentDto = new OrderComponentDto();
             orderComponentDto.setGiftCertificate(orderCertificate.getGiftCertificate());
+            orderComponentDto.getGiftCertificate().setTags(orderCertificate.getGiftCertificate().getTags());
             orderComponentDto.setAmount(orderCertificate.getAmount());
             orderComponentDtos.add(orderComponentDto);
         }
