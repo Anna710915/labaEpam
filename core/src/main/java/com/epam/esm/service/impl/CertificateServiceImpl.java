@@ -59,9 +59,7 @@ public class CertificateServiceImpl implements CertificateService {
     public long create(CertificateDto certificateDto) {
         LocalDateTime localDateTime = LocalDateTime.now();
         Optional<GiftCertificate> uniqCertificate = certificateRepository.showByName(certificateDto.getName());
-        if(uniqCertificate.isPresent()){
-            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_valid.not_uniq_certificate") + certificateDto.getName());
-        }
+        checkUniqueCertificateName(uniqCertificate);
         GiftCertificate giftCertificate = new GiftCertificate(certificateDto.getName(),
                 certificateDto.getDescription(), certificateDto.getPrice(),
                 certificateDto.getDuration(), localDateTime, localDateTime);
@@ -80,16 +78,7 @@ public class CertificateServiceImpl implements CertificateService {
     @Transactional
     public CertificateDto showCertificateWithTags(long id) {
         GiftCertificate giftCertificate = certificateRepository.showById(id);
-        CertificateDto certificateDto = new CertificateDto();
-        certificateDto.setId(id);
-        certificateDto.setName(giftCertificate.getName());
-        certificateDto.setDescription(giftCertificate.getDescription());
-        certificateDto.setPrice(giftCertificate.getPrice());
-        certificateDto.setDuration(giftCertificate.getDuration());
-        certificateDto.setCreateDate(giftCertificate.getCreateDate());
-        certificateDto.setLastUpdateDate(giftCertificate.getLastUpdateDate());
-        certificateDto.setTags(giftCertificate.getTags());
-        return certificateDto;
+        return initCertificateDto(giftCertificate);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -97,10 +86,8 @@ public class CertificateServiceImpl implements CertificateService {
     public void update(CertificateDto certificateDto, long id) {
         GiftCertificate giftCertificate = certificateRepository.showById(id);
         Optional<GiftCertificate> uniqCertificate = certificateRepository.showByName(certificateDto.getName());
-        if(uniqCertificate.isPresent() && uniqCertificate.get().getId() != id){
-            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_valid.not_uniq_certificate") + certificateDto.getName());
-        }
-        if(updateData(giftCertificate, certificateDto)) {
+        checkUpdateUniqueCertificateName(uniqCertificate, id);
+        if(updateGiftCertificateData(giftCertificate, certificateDto)) {
             giftCertificate.setLastUpdateDate(LocalDateTime.now());
         }
         giftCertificate.setTags(certificateDto.getTags());
@@ -109,17 +96,13 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public void updateCertificateDuration(long certificateId, int duration) {
-        if(duration < 0) {
-            throw new CustomNotValidArgumentException(messageLanguageUtil.getMessage("not_valid.duration") + duration);
-        }
+        checkPositiveDuration(duration);
         certificateRepository.updateDuration(certificateId, duration);
     }
 
     @Override
     public void updateCertificatePrice(long certificateId, BigDecimal price) {
-        if(price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new CustomNotValidArgumentException(messageLanguageUtil.getMessage("not_valid.price") + price);
-        }
+        checkPositivePrice(price);
         certificateRepository.updatePrice(certificateId, price);
     }
 
@@ -197,7 +180,7 @@ public class CertificateServiceImpl implements CertificateService {
                 .collect(Collectors.toList());
     }
 
-    private boolean updateData(GiftCertificate giftCertificate, CertificateDto certificateDto){
+    private boolean updateGiftCertificateData(GiftCertificate giftCertificate, CertificateDto certificateDto){
         boolean modify = false;
         if(!giftCertificate.getName().equals(certificateDto.getName())){
             giftCertificate.setName(certificateDto.getName());
@@ -221,13 +204,46 @@ public class CertificateServiceImpl implements CertificateService {
     private List<CertificateDto> certificateDtoListBuilder(List<GiftCertificate> giftCertificateList){
         List<CertificateDto> certificateDtoList = new ArrayList<>();
         for (GiftCertificate giftCertificate : giftCertificateList){
-            CertificateDto certificateDto = new CertificateDto();
-            certificateDto.setId(giftCertificate.getId());
-            certificateDto.setName(giftCertificate.getName());
-            certificateDto.setPrice(giftCertificate.getPrice());
-            certificateDto.setTags(giftCertificate.getTags());
+            CertificateDto certificateDto = initCertificateDto(giftCertificate);
             certificateDtoList.add(certificateDto);
         }
         return certificateDtoList;
+    }
+
+    private CertificateDto initCertificateDto(GiftCertificate giftCertificate){
+        CertificateDto certificateDto = new CertificateDto();
+        certificateDto.setId(giftCertificate.getId());
+        certificateDto.setName(giftCertificate.getName());
+        certificateDto.setDescription(giftCertificate.getDescription());
+        certificateDto.setPrice(giftCertificate.getPrice());
+        certificateDto.setDuration(giftCertificate.getDuration());
+        certificateDto.setCreateDate(giftCertificate.getCreateDate());
+        certificateDto.setLastUpdateDate(giftCertificate.getLastUpdateDate());
+        certificateDto.setTags(giftCertificate.getTags());
+        return certificateDto;
+    }
+
+    private void checkUniqueCertificateName(Optional<GiftCertificate> uniqCertificate){
+        if(uniqCertificate.isPresent()){
+            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_valid.not_uniq_certificate") + uniqCertificate.get().getName());
+        }
+    }
+
+    private void checkUpdateUniqueCertificateName(Optional<GiftCertificate> uniqCertificate, long updateId){
+        if(uniqCertificate.isPresent() && uniqCertificate.get().getId() != updateId){
+            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_valid.not_uniq_certificate") + uniqCertificate.get().getName());
+        }
+    }
+
+    private void checkPositiveDuration(int duration){
+        if(duration < 0) {
+            throw new CustomNotValidArgumentException(messageLanguageUtil.getMessage("not_valid.duration") + duration);
+        }
+    }
+
+    private void checkPositivePrice(BigDecimal price){
+        if(price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new CustomNotValidArgumentException(messageLanguageUtil.getMessage("not_valid.price") + price);
+        }
     }
 }

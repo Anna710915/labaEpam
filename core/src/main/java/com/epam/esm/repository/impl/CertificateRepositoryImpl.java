@@ -34,7 +34,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     private static final String SQL_SELECT_BY_TAG_NAME = """
             SELECT certificates FROM Tag AS tags  JOIN tags.giftCertificates AS certificates WHERE tags.name = :tag_name""";
     private static final String SQL_COUNT_BY_TAG_NAME = """
-            SELECT COUNT(certificates.id) FROM Tag AS tags  JOIN tags.giftCertificates AS certificates WHERE tags.name = :tag_name""";
+            SELECT COUNT(tags.id) FROM Tag AS tags  JOIN tags.giftCertificates AS certificates WHERE tags.name = :tag_name""";
     private static final String SQL_FIND_BY_TAGS_START = """
             SELECT gift_certificate_id, name, description, price, duration, create_date, last_update_date  FROM (
             SELECT gift_certificate.*, tag.name AS tag_name FROM gift_certificate

@@ -48,10 +48,7 @@ public class TagServiceImpl implements TagService {
     @Transactional
     public TagDto showById(long id) {
         Tag tag = tagRepository.showById(id);
-        TagDto tagDto = new TagDto();
-        tagDto.setId(tag.getId());
-        tagDto.setName(tag.getName());
-        return tagDto;
+        return initTagDto(tag);
     }
 
     @Override
@@ -69,11 +66,16 @@ public class TagServiceImpl implements TagService {
     private List<TagDto> buildListTagDto(List<Tag> tags){
         List<TagDto> tagDtos = new ArrayList<>();
         for(Tag tag: tags){
-            TagDto tagDto = new TagDto();
-            tagDto.setId(tag.getId());
-            tagDto.setName(tag.getName());
+            TagDto tagDto = initTagDto(tag);
             tagDtos.add(tagDto);
         }
         return tagDtos;
+    }
+
+    private TagDto initTagDto(Tag tag){
+        TagDto tagDto = new TagDto();
+        tagDto.setId(tag.getId());
+        tagDto.setName(tag.getName());
+        return tagDto;
     }
 }

@@ -1,14 +1,37 @@
 USE certificates;
 
+CREATE TABLE gift_certificate(
+	gift_certificate_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    description VARCHAR(120),
+    price DECIMAL(8,2),
+    duration INT,
+    create_date TIMESTAMP,
+    last_update_date TIMESTAMP
+);
+
 CREATE TABLE tag (
 	tag_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100)
 );
 
+ALTER TABLE tag
+MODIFY COLUMN name VARCHAR(100) UNIQUE;
+
 CREATE TABLE tags_gift_certificates(
 	tag_id BIGINT,
 	gift_certificate_id BIGINT
 );
+
+ALTER TABLE tags_gift_certificates
+ADD CONSTRAINT certificate_key
+FOREIGN KEY (gift_certificate_id) REFERENCES gift_certificate(gift_certificate_id)
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE tags_gift_certificates
+ADD CONSTRAINT tag_key
+FOREIGN KEY (tag_id) REFERENCES tag(tag_id)
+ON DELETE CASCADE ON UPDATE CASCADE;
 
 CREATE TABLE users(
 	user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -21,6 +44,11 @@ CREATE TABLE orders(
     user_id BIGINT
 ); 
 
+ALTER TABLE orders
+ADD CONSTRAINT user_key
+FOREIGN KEY (user_id) REFERENCES users(user_id)
+ON DELETE CASCADE ON UPDATE CASCADE;
+
 CREATE TABLE orders_gift_certificates(
 	orders_gift_certificates_id BIGINT PRIMARY KEY AUTO_INCREMENT,
 	order_id BIGINT,
@@ -28,40 +56,16 @@ CREATE TABLE orders_gift_certificates(
     amount INT
 );
 
+ALTER TABLE orders_gift_certificates
+ADD CONSTRAINT order_key
+FOREIGN KEY (order_id) REFERENCES orders(order_id)
+ON DELETE CASCADE ON UPDATE CASCADE;
 
-INSERT INTO orders(order_cost, order_date, user_id)
-VALUES (110, '2022-03-12 15:22:24', 1),
-       (110, '2022-04-11 15:16:34', 2);
+ALTER TABLE orders_gift_certificates
+ADD CONSTRAINT orders_certificate_key
+FOREIGN KEY (gift_certificate_id) REFERENCES gift_certificate(gift_certificate_id)
+ON DELETE CASCADE ON UPDATE CASCADE;
 
-INSERT INTO orders_gift_certificates(order_id, gift_certificate_id, amount)
-VALUES (1, 115, 1),
-       (2, 116, 2);
-
-INSERT INTO tags_gift_certificates (tag_id, gift_certificate_id)
-VALUES (16, 116),
-       (19, 116),
-       (18, 116);
-       
-INSERT INTO users(username)
-VALUES('Diana'),('Veronica');
-
-select users.user_id,  orders_gift_certificates.*, gift_certificate.name from users
-join orders on orders.user_id = users.user_id
-join orders_gift_certificates ON  orders.order_id = orders_gift_certificates.order_id
-join gift_certificate on orders_gift_certificates.gift_certificate_id = gift_certificate.gift_certificate_id;
-
-select * from orders 
-join orders_gift_certificates ON  orders.order_id = orders_gift_certificates.order_id;
-
-select * from orders_gift_certificates;
-select * from orders;
-
-select * from orders_gift_certificates;
-select * from gift_certificate;
-select * from orders;
-SELECT * FROM tag
-JOIN tags_gift_certificates ON tag.tag_id = tags_gift_certificates.tag_id
-JOIN gift_certificate ON gift_certificate.gift_certificate_id = tags_gift_certificates.gift_certificate_id;
 
 SELECT tag.name FROM tag 
 JOIN tags_gift_certificates ON tag.tag_id = tags_gift_certificates.tag_id
@@ -158,5 +162,35 @@ JOIN tags_gift_certificates ON gift_certificate.gift_certificate_id = tags_gift_
 JOIN tag ON tag.tag_id = tags_gift_certificates.tag_id
 WHERE tag.name = "#mascara") AS used_tags_certificates
 GROUP BY gift_certificate_id
-HAVING COUNT(tag_name) = 3;
+HAVING COUNT(tag_name) = 777;
+
+-- -----------------------------------
+
+CALL `insert_tags`();
+
+select * from tag;
+
+CALL `insert_users`();
+
+select * from users;
+
+CALL `insert_certificates`();
+
+select * from gift_certificate;
+
+CALL `insert_certificate_tags`();
+
+select * from tags_gift_certificates;
+
+CALL `insert_orders_gift_certificates`();
+
+select * from orders;
+
+select * from orders_gift_certificates;
+
+
+
+
+
+
 
