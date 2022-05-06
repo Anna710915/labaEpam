@@ -8,12 +8,14 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
 
 /**
  * The type Logging aspect is annotated as an aspect class.
  * @author Anna Merkul
  */
 @Aspect
+@Component
 public class LoggingAspect {
 
     private static final Logger logger = LogManager.getLogger();
