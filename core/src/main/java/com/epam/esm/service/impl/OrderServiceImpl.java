@@ -30,10 +30,10 @@ public class OrderServiceImpl implements OrderService {
     public long createOrder(OrderDto orderDto) {
         Order order = new Order(orderDto.getOrderCost(), new User(orderDto.getUserId()));
         order.setOrderDate(LocalDateTime.now());
-        OrderCertificate orderCertificate = new OrderCertificate();
         List<OrderComponentDto> orderComponentDtos = orderDto.getOrderComponentDtos();
         List<OrderCertificate> orderCertificates = new ArrayList<>();
         for(OrderComponentDto orderComponentDto : orderComponentDtos){
+            OrderCertificate orderCertificate = new OrderCertificate();
             orderCertificate.setGiftCertificate(orderComponentDto.getGiftCertificate());
             orderCertificate.setAmount(orderComponentDto.getAmount());
             orderCertificate.setOrder(order);

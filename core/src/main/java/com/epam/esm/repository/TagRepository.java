@@ -7,6 +7,7 @@ import java.util.Optional;
 
 /**
  * The interface Tag repository contains methods for tags.
+ *
  * @author Anna Merkul
  */
 public interface TagRepository {
@@ -21,6 +22,8 @@ public interface TagRepository {
     /**
      * Show the set of tags.
      *
+     * @param limit  the limit
+     * @param offset the offset
      * @return the set
      */
     List<Tag> show(int limit, int offset);
@@ -33,6 +36,12 @@ public interface TagRepository {
      */
     Tag showById(long id);
 
+    /**
+     * Show by name optional.
+     *
+     * @param name the name
+     * @return the optional
+     */
     Optional<Tag> showByName(String name);
 
     /**
@@ -43,7 +52,17 @@ public interface TagRepository {
      */
     boolean delete(long id);
 
+    /**
+     * Find widely user tag with highest orders cost list.
+     *
+     * @return the list
+     */
     List<Tag> findWidelyUserTagWithHighestOrdersCost();
 
+    /**
+     * Count all tags int.
+     *
+     * @return the int
+     */
     int countAllTags();
 }

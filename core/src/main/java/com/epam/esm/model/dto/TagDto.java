@@ -2,6 +2,10 @@ package com.epam.esm.model.dto;
 
 import org.springframework.hateoas.RepresentationModel;
 
+/**
+ * The type Tag dto.
+ * @author Anna Merkul
+ */
 public class TagDto extends RepresentationModel<TagDto> {
 
     private long id;

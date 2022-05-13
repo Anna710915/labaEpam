@@ -13,8 +13,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
-@SpringBootApplication(scanBasePackages = "com.epam.esm",
-        exclude = HibernateJpaAutoConfiguration.class)
+/**
+ * The type Development config.
+ * @author Anna Merkul
+ */
+@SpringBootApplication(scanBasePackages = "com.epam.esm")
 @PropertySource("classpath:application-dev.properties")
 @EnableTransactionManagement
 @Profile("dev")
@@ -22,11 +25,23 @@ public class DevelopmentConfig {
 
     private final DataSource dataSource;
 
+    /**
+     * Instantiates a new Development config.
+     *
+     * @param dataSource the data source
+     */
     @Autowired
     public DevelopmentConfig(DataSource dataSource){
         this.dataSource = dataSource;
     }
 
+    /**
+     * Session factory local session factory bean. FactoryBean that creates a Hibernate SessionFactory.
+     * This is the usual way to set up a shared Hibernate SessionFactory in a Spring application context;
+     * the SessionFactory can then be passed to data access objects via dependency injection.
+     *
+     * @return the local session factory bean
+     */
     @Bean
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
@@ -36,6 +51,12 @@ public class DevelopmentConfig {
         return sessionFactory;
     }
 
+    /**
+     * Hibernate transaction manager platform transaction manager.
+     * This is the central interface in Spring's imperative transaction infrastructure.
+     *
+     * @return the platform transaction manager
+     */
     @Bean
     public PlatformTransactionManager hibernateTransactionManager() {
         HibernateTransactionManager transactionManager

@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * The type Certificate dto class is used for transferring data between layers.
+ *
  * @author Anna Merkul
  */
 public class CertificateDto extends RepresentationModel<CertificateDto> {
@@ -31,6 +32,11 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
      */
     public CertificateDto(){}
 
+    /**
+     * Instantiates a new Certificate dto.
+     *
+     * @param tags the tags
+     */
     public CertificateDto(List<Tag> tags){
         this.tags = tags;
     }
@@ -38,10 +44,10 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
     /**
      * Instantiates a new Certificate dto.
      *
-     * @param id     the id
-     * @param name   the name
-     * @param price  the price
-     * @param tags the tag list
+     * @param id    the id
+     * @param name  the name
+     * @param price the price
+     * @param tags  the tag list
      */
     public CertificateDto(long id, String name, BigDecimal price,
                           List<Tag> tags) {
@@ -61,7 +67,7 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
      * @param duration       the duration
      * @param createDate     the create date
      * @param lastUpdateDate the last update date
-     * @param tags         the tag list
+     * @param tags           the tag list
      */
     public CertificateDto(long id, String name, String description,
                           BigDecimal price, int duration, LocalDateTime createDate,
@@ -85,7 +91,7 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
      * @param duration       the duration
      * @param createDate     the create date
      * @param lastUpdateDate the last update date
-     * @param tags         the tag list
+     * @param tags           the tag list
      */
     public CertificateDto(String name, String description,
                           BigDecimal price, int duration, LocalDateTime createDate,
@@ -106,7 +112,7 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
      * @param description the description
      * @param price       the price
      * @param duration    the duration
-     * @param tags      the tag list
+     * @param tags        the tag list
      */
     public CertificateDto(String name, String description, BigDecimal price, int duration,
                           List<Tag> tags) {
@@ -125,7 +131,7 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
      * @param description the description
      * @param price       the price
      * @param duration    the duration
-     * @param tags      the tag list
+     * @param tags        the tag list
      */
     public CertificateDto(long id, String name, String description, BigDecimal price,
                           int duration, List<Tag> tags) {

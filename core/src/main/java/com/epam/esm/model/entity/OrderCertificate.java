@@ -4,6 +4,12 @@ import com.epam.esm.model.audit.AuditListener;
 
 import javax.persistence.*;
 
+/**
+ * The type Order certificate. This is a linking table for users orders and
+ * gift certificates. It consists an amount gift certificates field.
+ *
+ * @author Anna Merkul
+ */
 @EntityListeners(AuditListener.class)
 @Entity
 @Table(name = "orders_gift_certificates")
@@ -26,8 +32,19 @@ public class OrderCertificate{
     @Column(name = "amount")
     private int amount;
 
+    /**
+     * Instantiates a new Order certificate.
+     */
     public OrderCertificate() {}
 
+    /**
+     * Instantiates a new Order certificate.
+     *
+     * @param orderGiftCertificateId the order gift certificate id
+     * @param order                  the order
+     * @param giftCertificate        the gift certificate
+     * @param amount                 the amount
+     */
     public OrderCertificate(long orderGiftCertificateId, Order order, GiftCertificate giftCertificate, int amount) {
         this.orderGiftCertificateId = orderGiftCertificateId;
         this.order = order;
@@ -35,34 +52,74 @@ public class OrderCertificate{
         this.amount = amount;
     }
 
+    /**
+     * Gets order gift certificate id.
+     *
+     * @return the order gift certificate id
+     */
     public long getOrderGiftCertificateId() {
         return orderGiftCertificateId;
     }
 
+    /**
+     * Sets order gift certificate id.
+     *
+     * @param orderGiftCertificateId the order gift certificate id
+     */
     public void setOrderGiftCertificateId(long orderGiftCertificateId) {
         this.orderGiftCertificateId = orderGiftCertificateId;
     }
 
+    /**
+     * Gets order.
+     *
+     * @return the order
+     */
     public Order getOrder() {
         return order;
     }
 
+    /**
+     * Sets order.
+     *
+     * @param order the order
+     */
     public void setOrder(Order order) {
         this.order = order;
     }
 
+    /**
+     * Gets gift certificate.
+     *
+     * @return the gift certificate
+     */
     public GiftCertificate getGiftCertificate() {
         return giftCertificate;
     }
 
+    /**
+     * Sets gift certificate.
+     *
+     * @param giftCertificate the gift certificate
+     */
     public void setGiftCertificate(GiftCertificate giftCertificate) {
         this.giftCertificate = giftCertificate;
     }
 
+    /**
+     * Gets amount.
+     *
+     * @return the amount
+     */
     public int getAmount() {
         return amount;
     }
 
+    /**
+     * Sets amount.
+     *
+     * @param amount the amount
+     */
     public void setAmount(int amount) {
         this.amount = amount;
     }

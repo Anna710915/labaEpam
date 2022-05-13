@@ -23,6 +23,8 @@ public interface CertificateRepository {
     /**
      * Show list of certificates.
      *
+     * @param limit  the limit
+     * @param offset the offset
      * @return the list
      */
     List<GiftCertificate> show(int limit, int offset);
@@ -77,7 +79,9 @@ public interface CertificateRepository {
     /**
      * Show by tag name the list of certificates.
      *
-     * @param name the name
+     * @param limit  the limit
+     * @param offset the offset
+     * @param name   the name
      * @return the list
      */
     List<GiftCertificate> showByTagName(int limit, int offset, String name);
@@ -85,6 +89,8 @@ public interface CertificateRepository {
     /**
      * Show by part name or description the list of certificates.
      *
+     * @param limit    the limit
+     * @param offset   the offset
      * @param partName the part name
      * @return the list
      */
@@ -93,6 +99,8 @@ public interface CertificateRepository {
     /**
      * Sort by date asc the list of certificates.
      *
+     * @param limit  the limit
+     * @param offset the offset
      * @return the list
      */
     List<GiftCertificate> sortByDateAsc(int limit, int offset);
@@ -100,6 +108,8 @@ public interface CertificateRepository {
     /**
      * Sort by name asc the list of certificates.
      *
+     * @param limit  the limit
+     * @param offset the offset
      * @return the list
      */
     List<GiftCertificate> sortByNameAsc(int limit, int offset);
@@ -107,18 +117,51 @@ public interface CertificateRepository {
     /**
      * Both sorting for the list of certificates.
      *
+     * @param limit  the limit
+     * @param offset the offset
      * @return the list
      */
     List<GiftCertificate> bothSorting(int limit, int offset);
 
 
+    /**
+     * Find by tags list.
+     *
+     * @param limit    the limit
+     * @param offset   the offset
+     * @param tagsName the tags name
+     * @return the list
+     */
     List<GiftCertificate> findByTags(int limit, int offset, List<String> tagsName);
 
+    /**
+     * Find count records int.
+     *
+     * @return the int
+     */
     int findCountRecords();
 
+    /**
+     * Find count by tag name int.
+     *
+     * @param tagName the tag name
+     * @return the int
+     */
     int findCountByTagName(String tagName);
 
+    /**
+     * Find count by part name or description int.
+     *
+     * @param part the part
+     * @return the int
+     */
     int findCountByPartNameOrDescription(String part);
 
+    /**
+     * Find count by tags query int.
+     *
+     * @param tagsName the tags name
+     * @return the int
+     */
     int findCountByTagsQuery(List<String> tagsName);
 }

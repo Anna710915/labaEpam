@@ -3,7 +3,6 @@ package com.epam.esm.config;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -14,8 +13,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-@SpringBootApplication(scanBasePackages = "com.epam.esm",
-        exclude = HibernateJpaAutoConfiguration.class)
+/**
+ * The type Persistence config.
+ * @author Anna Merkul
+ */
+@SpringBootApplication(scanBasePackages = {"com.epam.esm"})
+//@EnableJpaRepositories(basePackages = "com.epam.esm.repository")
 @PropertySource("classpath:application-production.properties")
 @EnableTransactionManagement
 @Profile("production")
@@ -23,11 +26,22 @@ public class PersistenceConfig {
 
     private final Environment environment;
 
+    /**
+     * Instantiates a new Persistence config.
+     *
+     * @param environment the environment
+     */
     @Autowired
     public PersistenceConfig(Environment environment){
         this.environment = environment;
     }
 
+    /**
+     * Data source. A factory for connections to the physical data source
+     * that this DataSource object represents.
+     *
+     * @return the data source
+     */
     @Bean
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
@@ -39,6 +53,12 @@ public class PersistenceConfig {
         return dataSource;
     }
 
+    /**
+     * Session factory local session factory bean.
+     * FactoryBean that creates a Hibernate SessionFactory.
+     *
+     * @return the local session factory bean
+     */
     @Bean
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
@@ -50,7 +70,11 @@ public class PersistenceConfig {
     }
 
 
-
+    /**
+     * Hibernate transaction manager platform transaction manager.
+     *
+     * @return the platform transaction manager
+     */
     @Bean
     public PlatformTransactionManager hibernateTransactionManager() {
         HibernateTransactionManager transactionManager

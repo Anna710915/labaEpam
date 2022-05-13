@@ -40,7 +40,6 @@ public class GiftCertificate {
     @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
 
-
     @OneToMany(mappedBy = "giftCertificate", cascade = CascadeType.ALL)
     private List<OrderCertificate> orderCertificates = new ArrayList<>();
 

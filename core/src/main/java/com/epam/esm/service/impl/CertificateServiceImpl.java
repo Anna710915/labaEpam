@@ -236,7 +236,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     private void checkPositiveDuration(int duration){
-        if(duration < 0) {
+        if(duration < 0 || duration > 365) {
             throw new CustomNotValidArgumentException(messageLanguageUtil.getMessage("not_valid.duration") + duration);
         }
     }
