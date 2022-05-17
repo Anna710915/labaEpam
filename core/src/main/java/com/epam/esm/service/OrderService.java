@@ -17,15 +17,7 @@ public interface OrderService {
      */
     long createOrder(OrderDto orderDto);
 
-    /**
-     * Find paginated user orders list.
-     *
-     * @param userId the user id
-     * @param size   the size
-     * @param offset the offset
-     * @return the list
-     */
-    List<OrderDto> findPaginatedUserOrders(long userId, int size, int offset);
+    List<OrderDto> findPaginatedUserOrders(long userId, int page, int size);
 
     /**
      * Find user order order dto.

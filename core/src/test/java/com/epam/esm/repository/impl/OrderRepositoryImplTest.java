@@ -66,15 +66,15 @@ public class OrderRepositoryImplTest {
         assertEquals(expected, orders.size());
     }
 
-    @Test
-    void findOrderByIdTest(){
-        Order order = orderRepository.findUserOrder(1L);
-        assertNotNull(order);
-    }
-
-    @Test
-    void findOrderByUserIdException(){
-        Assertions.assertThrows(CustomNotFoundException.class, () ->
-                orderRepository.findUserOrder(5L));
-    }
+//    @Test
+//    void findOrderByIdTest(){
+//        Order order = orderRepository.findUserOrder(1L);
+//        assertNotNull(order);
+//    }
+//
+//    @Test
+//    void findOrderByUserIdException(){
+//        Assertions.assertThrows(CustomNotFoundException.class, () ->
+//                orderRepository.findUserOrder(5L));
+//    }
 }

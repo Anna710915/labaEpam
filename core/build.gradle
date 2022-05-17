@@ -29,10 +29,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools:2.6.6'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.6.6'
     testImplementation 'com.jayway.jsonpath:json-path'
-    implementation 'org.hibernate:hibernate-core:5.6.8.Final'
     implementation 'org.springframework:spring-orm:5.3.19'
     implementation 'commons-dbcp:commons-dbcp:1.4'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.7'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.7'
 }
 
 test {

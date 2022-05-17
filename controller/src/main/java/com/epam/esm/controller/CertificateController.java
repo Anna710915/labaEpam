@@ -107,8 +107,7 @@ public class CertificateController {
     @GetMapping(value = "/certificate", produces = "application/json")
     public CollectionModel<CertificateDto> showAll(@RequestParam(value = "page") int page,
                                                         @RequestParam(value = "size") int size){
-        int offset = Pagination.offset(page, size);
-        List<CertificateDto> certificateDtos = certificateService.showAll(size, offset);
+        List<CertificateDto> certificateDtos = certificateService.showAll(page, size);
         addLinksForCertificatesList(certificateDtos);
         int totalRecords = certificateService.findCountCertificateRecords();
         Link prev = findPrevShowAllLink(page, size);
@@ -158,11 +157,10 @@ public class CertificateController {
     public CollectionModel<CertificateDto> getByTagName(@RequestParam("tag_name") String name,
                                              @RequestParam(value = "page") int page,
                                              @RequestParam(value = "size") int size){
-        int offset = Pagination.offset(page, size);
         int totalRecords = certificateService.findCountCertificatesByTagName(name);
         int pages = Pagination.findPages(totalRecords, size);
         int lastPage = Pagination.findLastPage(pages, size, totalRecords);
-        List<CertificateDto> certificateDtos = certificateService.showByTagName(size, offset, name);
+        List<CertificateDto> certificateDtos = certificateService.showByTagName(page, size, name);
         addLinksForCertificatesList(certificateDtos);
         Link prevLink = linkTo(methodOn(CertificateController.class)
                 .getByTagName(name, Pagination.findPrevPage(page), size))
@@ -185,11 +183,10 @@ public class CertificateController {
     public CollectionModel<CertificateDto> searchCertificates(@RequestParam("part") String part,
                                                    @RequestParam(value = "page") int page,
                                                    @RequestParam(value = "size") int size){
-        int offset = Pagination.offset(page, size);
         int totalRecords = certificateService.findCountByPartNameOrDescription(part);
         int pages = Pagination.findPages(totalRecords, size);
         int lastPage = Pagination.findLastPage(pages, size, totalRecords);
-        List<CertificateDto> certificateDtos =  certificateService.showByPartWord(size, offset, part);
+        List<CertificateDto> certificateDtos =  certificateService.showByPartWord(page, size, part);
         addLinksForCertificatesList(certificateDtos);
         Link prevLink = linkTo(methodOn(CertificateController.class)
                 .searchCertificates(part, Pagination.findPrevPage(page), size))
@@ -214,17 +211,16 @@ public class CertificateController {
                                      @RequestParam(value = "param_2", required = false) String date,
                                      @RequestParam(value = "page") int page,
                                      @RequestParam(value = "size") int size){
-        int offset = Pagination.offset(page, size);
         int totalRecords = certificateService.findCountCertificateRecords();
         List<CertificateDto> certificateDtos;
         if(SORT_NAME.equals(name) && SORT_DATE.equals(date)){
-            certificateDtos = certificateService.bothSort(size, offset);
+            certificateDtos = certificateService.bothSort(page, size);
         }else if(SORT_NAME.equals(name)){
-            certificateDtos = certificateService.sortByName(size, offset);
+            certificateDtos = certificateService.sortByName(page, size);
         }else if(SORT_DATE.equals(date)){
-            certificateDtos = certificateService.sortByDate(size, offset);
+            certificateDtos = certificateService.sortByDate(page, size);
         }else{
-            certificateDtos = certificateService.showAll(size, offset);
+            certificateDtos = certificateService.showAll(page, size);
         }
         int pages = Pagination.findPages(totalRecords, size);
         int lastPage = Pagination.findLastPage(pages, size, totalRecords);

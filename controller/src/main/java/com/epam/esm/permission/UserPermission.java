@@ -6,12 +6,11 @@ import java.util.Map;
 public enum UserPermission {
 
     GUEST(Map.of(HttpMethod.GET, new String[]{"/certificates/tag/**", "/certificates/certificate/**"},
-            HttpMethod.POST, new String[]{"/certificates/login"})),
+            HttpMethod.POST, new String[]{"/certificates/login", "/certificates/signup"})),
 
     CLIENT(Map.of(
-            HttpMethod.GET, new String[]{"/certificates/orders/**"},
+            HttpMethod.GET, new String[]{"/certificates/orders/**", "/certificates/orders/user/**" },
             HttpMethod.POST, new String[]{"/certificates/order"})),
-
     ADMIN(Map.of(
             HttpMethod.PATCH, new String[]{"/certificates/certificate/**"},
             HttpMethod.PUT, new String[]{"/certificates/certificate/**"},

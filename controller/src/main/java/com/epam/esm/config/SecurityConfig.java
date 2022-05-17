@@ -1,5 +1,6 @@
 package com.epam.esm.config;
 
+import com.epam.esm.model.entity.UserRole;
 import com.epam.esm.permission.UserPermission;
 import com.epam.esm.security.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.EnumSet;
@@ -29,6 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                           JwtTokenFilter jwtTokenFilter){
         this.userDetailsService = userDetailsService;
         this.jwtTokenFilter = jwtTokenFilter;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
     @Override
@@ -63,7 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         Set<HttpMethod> methodTypes = permissions.keySet();
         for(HttpMethod method : methodTypes){
             switch (userPermission){
-                case ADMIN, CLIENT -> httpSecurity.authorizeRequests().antMatchers(method, permissions.get(method)).hasAnyAuthority(userPermission.name());
+                case ADMIN -> httpSecurity.authorizeRequests().antMatchers(method, permissions.get(method)).hasAnyAuthority(UserRole.ADMIN.name());
+                case CLIENT -> httpSecurity.authorizeRequests().antMatchers(method, permissions.get(method)).hasAnyAuthority(UserRole.ADMIN.name(), UserRole.CLIENT.name());
                 case GUEST -> httpSecurity.authorizeRequests().antMatchers(method, permissions.get(method)).permitAll();
                 default -> throw new IllegalArgumentException("Not such user role" + userPermission);
             }

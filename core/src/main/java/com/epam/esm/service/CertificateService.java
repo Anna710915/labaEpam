@@ -20,14 +20,8 @@ public interface CertificateService {
      */
     long create(CertificateDto certificateDto);
 
-    /**
-     * Show all list of certificates with tag.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @return the list
-     */
-    List<CertificateDto> showAll(int limit, int offset);
+
+    List<CertificateDto> showAll(int page, int offset);
 
     /**
      * Show certificate with tags certificate dto.
@@ -45,52 +39,17 @@ public interface CertificateService {
      */
     void update(CertificateDto newDto, long id);
 
-    /**
-     * Show by tag name list certificates with tags.
-     *
-     * @param limit   the limit
-     * @param offset  the offset
-     * @param tagName the tag name
-     * @return the list
-     */
-    List<CertificateDto> showByTagName(int limit, int offset, String tagName);
 
-    /**
-     * Show by part word list certificates with tags.
-     *
-     * @param limit    the limit
-     * @param offset   the offset
-     * @param partWord the part word
-     * @return the list
-     */
-    List<CertificateDto> showByPartWord(int limit, int offset, String partWord);
+    List<CertificateDto> showByTagName(int page, int size, String tagName);
 
-    /**
-     * Sort by name list certificates with tags.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @return the list
-     */
-    List<CertificateDto> sortByName(int limit, int offset);
 
-    /**
-     * Sort by date list certificates with tags.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @return the list
-     */
-    List<CertificateDto> sortByDate(int limit, int offset);
+    List<CertificateDto> showByPartWord(int page, int size, String partWord);
 
-    /**
-     * Both sort list certificates with tags.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @return the list
-     */
-    List<CertificateDto> bothSort(int limit, int offset);
+    List<CertificateDto> sortByName(int page, int size);
+
+    List<CertificateDto> sortByDate(int page, int size);
+
+    List<CertificateDto> bothSort(int page, int size);
 
     /**
      * Delete certificate.
@@ -116,14 +75,6 @@ public interface CertificateService {
      */
     void updateCertificatePrice(long certificateId, BigDecimal price);
 
-    /**
-     * Find certificates by query list.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @param query  the query
-     * @return the list
-     */
     List<CertificateDto> findCertificatesByQuery(int limit, int offset, String query);
 
     /**

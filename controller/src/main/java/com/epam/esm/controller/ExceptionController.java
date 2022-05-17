@@ -1,9 +1,6 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.exception.CustomError;
-import com.epam.esm.exception.CustomExternalException;
-import com.epam.esm.exception.CustomNotFoundException;
-import com.epam.esm.exception.CustomNotValidArgumentException;
+import com.epam.esm.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,7 +44,7 @@ public class ExceptionController {
      * @param e the e
      * @return the custom error
      */
-    @ExceptionHandler(CustomExternalException.class)
+    @ExceptionHandler({CustomExternalException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public @ResponseBody CustomError externalError(CustomExternalException e) {
         return new CustomError(500, e.getMessage());
@@ -64,5 +61,11 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody CustomError badRequestError(Exception e) {
         return new CustomError(400, e.getMessage());
+    }
+
+    @ExceptionHandler(CustomForbiddenException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody CustomError forbiddenError(Exception e) {
+        return new CustomError(403, e.getMessage());
     }
 }

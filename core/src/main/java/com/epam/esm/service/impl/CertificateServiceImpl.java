@@ -4,11 +4,14 @@ import com.epam.esm.exception.CustomNotFoundException;
 import com.epam.esm.exception.CustomNotValidArgumentException;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.dto.CertificateDto;
+import com.epam.esm.model.entity.Tag;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.CertificateService;
 import com.epam.esm.util.MessageLanguageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -58,49 +60,55 @@ public class CertificateServiceImpl implements CertificateService {
     @Transactional
     public long create(CertificateDto certificateDto) {
         LocalDateTime localDateTime = LocalDateTime.now();
-        Optional<GiftCertificate> uniqCertificate = certificateRepository.showByName(certificateDto.getName());
+        GiftCertificate uniqCertificate = certificateRepository.findGiftCertificateByName(certificateDto.getName());
         checkUniqueCertificateName(uniqCertificate);
         GiftCertificate giftCertificate = new GiftCertificate(certificateDto.getName(),
                 certificateDto.getDescription(), certificateDto.getPrice(),
                 certificateDto.getDuration(), localDateTime, localDateTime);
-        giftCertificate.setTags(certificateDto.getTags());
-        return certificateRepository.create(giftCertificate);
+        List<Tag> tags = tagRepository.saveAll(certificateDto.getTags());
+        giftCertificate.setTags(tags);
+        return certificateRepository.save(giftCertificate).getId();
     }
 
     @Override
     @Transactional
-    public List<CertificateDto> showAll(int limit, int offset) {
-        List<GiftCertificate> giftCertificateList = certificateRepository.show(limit, offset);
+    public List<CertificateDto> showAll(int page, int size) {
+        List<GiftCertificate> giftCertificateList = certificateRepository
+                .findAll(PageRequest.of(page - 1, size)).getContent();
         return certificateDtoListBuilder(giftCertificateList);
     }
 
     @Override
     @Transactional
     public CertificateDto showCertificateWithTags(long id) {
-        GiftCertificate giftCertificate = certificateRepository.showById(id);
+        GiftCertificate giftCertificate = certificateRepository.findGiftCertificateById(id);
+        checkCertificate(giftCertificate, id);
         return initCertificateDto(giftCertificate);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void update(CertificateDto certificateDto, long id) {
-        GiftCertificate giftCertificate = certificateRepository.showById(id);
-        Optional<GiftCertificate> uniqCertificate = certificateRepository.showByName(certificateDto.getName());
+        GiftCertificate giftCertificate = certificateRepository.findGiftCertificateById(id);
+        GiftCertificate uniqCertificate = certificateRepository.findGiftCertificateByName(certificateDto.getName());
         checkUpdateUniqueCertificateName(uniqCertificate, id);
         if(updateGiftCertificateData(giftCertificate, certificateDto)) {
             giftCertificate.setLastUpdateDate(LocalDateTime.now());
         }
-        giftCertificate.setTags(certificateDto.getTags());
-        certificateRepository.update(giftCertificate);
+        List<Tag> tags = tagRepository.saveAll(certificateDto.getTags());
+        giftCertificate.setTags(tags);
+        certificateRepository.save(giftCertificate);
     }
 
     @Override
+    @Transactional
     public void updateCertificateDuration(long certificateId, int duration) {
         checkPositiveDuration(duration);
         certificateRepository.updateDuration(certificateId, duration);
     }
 
     @Override
+    @Transactional
     public void updateCertificatePrice(long certificateId, BigDecimal price) {
         checkPositivePrice(price);
         certificateRepository.updatePrice(certificateId, price);
@@ -108,36 +116,39 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional
-    public List<CertificateDto> showByTagName(int limit, int offset, String tagName) {
-        List<GiftCertificate> giftCertificateList = certificateRepository.showByTagName(limit, offset, tagName);
+    public List<CertificateDto> showByTagName(int page, int size, String tagName) {
+        List<GiftCertificate> giftCertificateList = certificateRepository.showByTagName(tagName, PageRequest.of(page - 1, size));
         return certificateDtoListBuilder(giftCertificateList);
     }
 
     @Override
     @Transactional
-    public List<CertificateDto> showByPartWord(int limit, int offset, String partWord) {
-        List<GiftCertificate> listByPartName = certificateRepository.showByPartNameOrDescription(limit, offset, partWord);
+    public List<CertificateDto> showByPartWord(int page, int size, String partWord) {
+        List<GiftCertificate> listByPartName = certificateRepository.findGiftCertificatesByPartNameOrDescription(partWord, PageRequest.of(page - 1, size));
         return certificateDtoListBuilder(listByPartName);
     }
 
     @Override
     @Transactional
-    public List<CertificateDto> sortByName(int limit, int offset) {
-        List<GiftCertificate> giftCertificateList = certificateRepository.sortByNameAsc(limit, offset);
+    public List<CertificateDto> sortByName(int page, int size) {
+        List<GiftCertificate> giftCertificateList = certificateRepository
+                .findAll(PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "name"))).getContent();
         return certificateDtoListBuilder(giftCertificateList);
     }
 
     @Override
     @Transactional
-    public List<CertificateDto> sortByDate(int limit, int offset) {
-        List<GiftCertificate> giftCertificateList = certificateRepository.sortByDateAsc(limit, offset);
+    public List<CertificateDto> sortByDate(int page, int size) {
+        List<GiftCertificate> giftCertificateList = certificateRepository
+                .findAll(PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "lastUpdateDate"))).getContent();
         return certificateDtoListBuilder(giftCertificateList);
     }
 
     @Override
     @Transactional
-    public List<CertificateDto> bothSort(int limit, int offset) {
-        List<GiftCertificate> giftCertificateList = certificateRepository.bothSorting(limit, offset);
+    public List<CertificateDto> bothSort(int page, int size) {
+        List<GiftCertificate> giftCertificateList = certificateRepository
+                .findAll(PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "name", "lastUpdateDate"))).getContent();
         return certificateDtoListBuilder(giftCertificateList);
     }
 
@@ -158,7 +169,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public int findCountByPartNameOrDescription(String part) {
-        return certificateRepository.findCountByPartNameOrDescription(part);
+        return certificateRepository.countGiftCertificateByPartNameOrDescription(part);
     }
 
     @Override
@@ -169,14 +180,15 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
+    @Transactional
     public boolean deleteCertificate(long id) {
-        return certificateRepository.delete(id);
+        return certificateRepository.deleteGiftCertificateById(id) == 1;
     }
 
 
     private List<String> filterExistingTags(String[] tags){
         return Arrays.stream(tags)
-                .filter(tag -> tagRepository.showByName(tag).isPresent())
+                .filter(tag -> tagRepository.findTagByName(tag) != null)
                 .collect(Collectors.toList());
     }
 
@@ -223,15 +235,15 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateDto;
     }
 
-    private void checkUniqueCertificateName(Optional<GiftCertificate> uniqCertificate){
-        if(uniqCertificate.isPresent()){
-            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_valid.not_uniq_certificate") + uniqCertificate.get().getName());
+    private void checkUniqueCertificateName(GiftCertificate uniqCertificate){
+        if(uniqCertificate != null){
+            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_valid.not_uniq_certificate") + uniqCertificate.getName());
         }
     }
 
-    private void checkUpdateUniqueCertificateName(Optional<GiftCertificate> uniqCertificate, long updateId){
-        if(uniqCertificate.isPresent() && uniqCertificate.get().getId() != updateId){
-            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_valid.not_uniq_certificate") + uniqCertificate.get().getName());
+    private void checkUpdateUniqueCertificateName(GiftCertificate uniqCertificate, long updateId){
+        if(uniqCertificate != null && uniqCertificate.getId() != updateId){
+            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_valid.not_uniq_certificate") + uniqCertificate.getName());
         }
     }
 
@@ -244,6 +256,12 @@ public class CertificateServiceImpl implements CertificateService {
     private void checkPositivePrice(BigDecimal price){
         if(price.compareTo(BigDecimal.ZERO) < 0) {
             throw new CustomNotValidArgumentException(messageLanguageUtil.getMessage("not_valid.price") + price);
+        }
+    }
+
+    private void checkCertificate(GiftCertificate giftCertificate, long id){
+        if(giftCertificate == null){
+            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_found.certificate") + id);
         }
     }
 }

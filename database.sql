@@ -43,6 +43,9 @@ ADD COLUMN role VARCHAR(50);
 ALTER TABLE users
 ADD COLUMN user_password VARCHAR(50);
 
+ALTER TABLE users
+MODIFY COLUMN user_password VARCHAR(60);
+
 CREATE TABLE orders(
 	order_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_cost DECIMAL(8,2),
@@ -107,10 +110,14 @@ SELECT gift_certificate_id, name, description, price, duration, create_date, las
 SELECT gift_certificate.*, tag.name AS tag_name FROM gift_certificate
 JOIN tags_gift_certificates ON gift_certificate.gift_certificate_id = tags_gift_certificates.gift_certificate_id 
 JOIN tag ON tag.tag_id = tags_gift_certificates.tag_id
-WHERE tag.name = "Tag_5"
+WHERE tag.name = 'Tag_730'
+UNION SELECT gift_certificate.*, tag.name AS tag_name FROM gift_certificate
+JOIN tags_gift_certificates ON gift_certificate.gift_certificate_id = tags_gift_certificates.gift_certificate_id
+JOIN tag ON tag.tag_id = tags_gift_certificates.tag_id
+WHERE tag.name= 'Tag_909'
 ) AS used_tags_certificates
 GROUP BY gift_certificate_id
-HAVING COUNT(tag_name) = 1;
+HAVING COUNT(tag_name) = 2;
 
 -- -----------------------------------
 
@@ -138,7 +145,6 @@ select * from orders_gift_certificates;
 
 CALL `add_login_password`();
 
-select * from users;
 
 
 

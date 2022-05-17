@@ -71,7 +71,6 @@ public class TagController {
     @GetMapping(value = "/tag")
     public CollectionModel<TagDto> getTags(@RequestParam("page") int page,
                                            @RequestParam("size") int size){
-        int offset = Pagination.offset(page, size);
         int totalRecords = tagService.countAllTags();
         int pages = Pagination.findPages(totalRecords, size);
         int lastPage = Pagination.findLastPage(pages, size, totalRecords);
@@ -79,7 +78,7 @@ public class TagController {
                 .withRel("prev").withType(HttpMethod.GET.name());
         Link nextLink = linkTo(methodOn(TagController.class).getTags(Pagination.findNextPage(page, lastPage), size))
                 .withRel("next").withType(HttpMethod.GET.name());
-        List<TagDto> tagDtos = tagService.showAll(size, offset);
+        List<TagDto> tagDtos = tagService.showAll(page, size);
         addDeleteLinksForTags(tagDtos);
         return CollectionModel.of(tagDtos, prevLink, nextLink);
     }

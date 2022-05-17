@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * The type Tag. The entity class.
+ *
  * @author Anna Merkul
  */
 @EntityListeners(AuditListener.class)
@@ -87,6 +88,7 @@ public class Tag {
     public void setName(String name) {
         this.name = name;
     }
+
 
     @Override
     public boolean equals(Object o) {

@@ -36,14 +36,14 @@ class OrderServiceImplTest {
         orderService.findPaginatedUserOrders(1L, 1, 1);
     }
 
-    @Test
-    void findUserOrder() {
-        Order order = new Order();
-        order.setUser(new User());
-        order.setOrderCertificates(new ArrayList<>());
-        Mockito.when(orderRepository.findUserOrder(1L)).thenReturn(order);
-        orderService.findUserOrder(1L);
-    }
+//    @Test
+//    void findUserOrder() {
+//        Order order = new Order();
+//        order.setUser(new User());
+//        order.setOrderCertificates(new ArrayList<>());
+//        Mockito.when(orderRepository.findUserOrder(1L)).thenReturn(order);
+//        orderService.findUserOrder(1L);
+//    }
 
     @AfterEach
     void destroy(){

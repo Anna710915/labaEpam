@@ -10,14 +10,8 @@ import java.util.List;
  * @author Anna Merkul
  */
 public interface TagService {
-    /**
-     * Show all set of tags.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @return the set
-     */
-    List<TagDto> showAll(int limit, int offset);
+
+    List<TagDto> showAll(int page, int size);
 
     /**
      * Delete a tag.

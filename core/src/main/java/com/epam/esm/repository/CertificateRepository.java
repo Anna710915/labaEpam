@@ -1,33 +1,23 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.model.entity.GiftCertificate;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * The interface Certificate repository contains methods for certificates.
  *
  * @author Anna Merkul
  */
-public interface CertificateRepository {
-    /**
-     * Create a certificate.
-     *
-     * @param giftCertificate the gift certificate
-     * @return the long
-     */
-    long create(GiftCertificate giftCertificate);
-
-    /**
-     * Show list of certificates.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @return the list
-     */
-    List<GiftCertificate> show(int limit, int offset);
+@Repository
+public interface CertificateRepository extends JpaRepository<GiftCertificate, Long>, QueryCertificateRepository {
 
     /**
      * Show by id gift certificate.
@@ -35,7 +25,7 @@ public interface CertificateRepository {
      * @param id the id
      * @return the gift certificate
      */
-    GiftCertificate showById(long id);
+    GiftCertificate findGiftCertificateById(long id);
 
     /**
      * Show by name gift certificate.
@@ -43,14 +33,7 @@ public interface CertificateRepository {
      * @param name the name
      * @return the gift certificate
      */
-    Optional<GiftCertificate> showByName(String name);
-
-    /**
-     * Update a certificate.
-     *
-     * @param giftCertificate the gift certificate
-     */
-    void update(GiftCertificate giftCertificate);
+    GiftCertificate findGiftCertificateByName(String name);
 
     /**
      * Update duration boolean.
@@ -58,7 +41,9 @@ public interface CertificateRepository {
      * @param certificateId the certificate id
      * @param duration      the duration
      */
-    void updateDuration(long certificateId, int duration);
+    @Modifying
+    @Query(value = "UPDATE gift_certificate SET duration = :duration WHERE gift_certificate_id = :certificateId", nativeQuery = true)
+    void updateDuration(@Param("certificateId") long certificateId, @Param("duration") int duration);
 
     /**
      * Update price boolean.
@@ -66,79 +51,24 @@ public interface CertificateRepository {
      * @param certificateId the certificate id
      * @param price         the price
      */
-    void updatePrice(long certificateId, BigDecimal price);
+    @Modifying
+    @Query(value = "UPDATE gift_certificate SET price = :price WHERE gift_certificate_id = :certificateId", nativeQuery = true)
+    void updatePrice(@Param("certificateId") long certificateId, @Param("price") BigDecimal price);
 
-    /**
-     * Delete a certificate.
-     *
-     * @param id the id
-     * @return the boolean
-     */
-    boolean delete(long id);
+    int deleteGiftCertificateById(long id);
 
-    /**
-     * Show by tag name the list of certificates.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @param name   the name
-     * @return the list
-     */
-    List<GiftCertificate> showByTagName(int limit, int offset, String name);
+    @Query(value = "SELECT certificates FROM GiftCertificate certificates JOIN certificates.tags tags WHERE tags.name = :name")
+    List<GiftCertificate> showByTagName(@Param("name") String name, Pageable pageable);
 
-    /**
-     * Show by part name or description the list of certificates.
-     *
-     * @param limit    the limit
-     * @param offset   the offset
-     * @param partName the part name
-     * @return the list
-     */
-    List<GiftCertificate> showByPartNameOrDescription(int limit, int offset, String partName);
-
-    /**
-     * Sort by date asc the list of certificates.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @return the list
-     */
-    List<GiftCertificate> sortByDateAsc(int limit, int offset);
-
-    /**
-     * Sort by name asc the list of certificates.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @return the list
-     */
-    List<GiftCertificate> sortByNameAsc(int limit, int offset);
-
-    /**
-     * Both sorting for the list of certificates.
-     *
-     * @param limit  the limit
-     * @param offset the offset
-     * @return the list
-     */
-    List<GiftCertificate> bothSorting(int limit, int offset);
-
-
-    /**
-     * Find by tags list.
-     *
-     * @param limit    the limit
-     * @param offset   the offset
-     * @param tagsName the tags name
-     * @return the list
-     */
-    List<GiftCertificate> findByTags(int limit, int offset, List<String> tagsName);
+    @Query(value = "SELECT g FROM GiftCertificate g WHERE g.name LIKE %:partName% OR g.description LIKE %:partName%")
+    List<GiftCertificate> findGiftCertificatesByPartNameOrDescription(@Param("partName") String partName, Pageable pageable);
 
     /**
      * Find count records int.
      *
      * @return the int
      */
+    @Query(value = "SELECT COUNT(*) FROM gift_certificate", nativeQuery = true)
     int findCountRecords();
 
     /**
@@ -147,21 +77,14 @@ public interface CertificateRepository {
      * @param tagName the tag name
      * @return the int
      */
-    int findCountByTagName(String tagName);
+    @Query(value = "SELECT COUNT(*) FROM gift_certificate JOIN tags_gift_certificates " +
+            "ON  tags_gift_certificates.gift_certificate_id = gift_certificate.gift_certificate_id " +
+            "JOIN tag ON tag.tag_id = tags_gift_certificates.tag_id WHERE tag.name = :tagName", nativeQuery = true)
+    int findCountByTagName(@Param("tagName") String tagName);
 
-    /**
-     * Find count by part name or description int.
-     *
-     * @param part the part
-     * @return the int
-     */
-    int findCountByPartNameOrDescription(String part);
 
-    /**
-     * Find count by tags query int.
-     *
-     * @param tagsName the tags name
-     * @return the int
-     */
-    int findCountByTagsQuery(List<String> tagsName);
+    @Query("SELECT COUNT(g) FROM GiftCertificate g WHERE g.name  LIKE %:partName% OR g.description LIKE %:partName%")
+    int countGiftCertificateByPartNameOrDescription(@Param("partName") String partName);
+
+
 }

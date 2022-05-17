@@ -8,8 +8,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
  * The type Controller config.
  * @author Anna Merkul
  */
-@SpringBootApplication(scanBasePackages = "com.epam.esm",
-        exclude = HibernateJpaAutoConfiguration.class)
+@SpringBootApplication(scanBasePackages = "com.epam.esm")
 public class ControllerConfig {
     /**
      * The entry point of application.
