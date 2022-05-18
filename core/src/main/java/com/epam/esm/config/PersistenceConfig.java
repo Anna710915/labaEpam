@@ -60,35 +60,6 @@ public class PersistenceConfig {
         return dataSource;
     }
 
-    /**
-     * Session factory local session factory bean.
-     * FactoryBean that creates a Hibernate SessionFactory.
-     *
-     * @return the local session factory bean
-     */
-//    @Bean
-//    public LocalSessionFactoryBean sessionFactory() {
-//        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-//        sessionFactory.setDataSource(dataSource());
-//        sessionFactory.setPackagesToScan(
-//                "com.epam.esm");
-//        sessionFactory.setHibernateProperties(additionalProperties());
-//        return sessionFactory;
-//    }
-
-    /**
-     * Hibernate transaction manager platform transaction manager.
-     *
-     * @return the platform transaction manager
-     */
-//    @Bean
-//    public PlatformTransactionManager hibernateTransactionManager() {
-//        HibernateTransactionManager transactionManager
-//                = new HibernateTransactionManager();
-//        transactionManager.setSessionFactory(sessionFactory().getObject());
-//        return transactionManager;
-//    }
-
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();

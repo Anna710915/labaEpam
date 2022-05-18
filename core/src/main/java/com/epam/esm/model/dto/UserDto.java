@@ -2,10 +2,22 @@ package com.epam.esm.model.dto;
 
 import com.epam.esm.model.entity.UserRole;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class UserDto {
 
     private long userId;
+
+    @NotBlank(message = "{not_blank_username}")
+    @Pattern(regexp = "[A-zА-я0-9-_\\.]+", message = "{username_validation_symbols}")
+    @Size(min = 4, max = 50, message = "{size_username}")
     private String username;
+
+    @NotBlank(message = "{not_blank_password}")
+    @Pattern(regexp = "[A-zА-я0-9-_]+", message = "{password_validation_symbols}")
+    @Size(min = 4, max = 50, message = "{size_password}")
     private String password;
     private UserRole role;
 

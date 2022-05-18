@@ -11,6 +11,14 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.epam.esm.repository.query.CertificateQuery.UPDATE_CERTIFICATE_DURATION;
+import static com.epam.esm.repository.query.CertificateQuery.UPDATE_CERTIFICATE_PRICE;
+import static com.epam.esm.repository.query.CertificateQuery.SHOW_CERTIFICATE_BY_TAG_NAME;
+import static com.epam.esm.repository.query.CertificateQuery.FIND_CERTIFICATES_BY_PART_NAME_OR_DESCRIPTION;
+import static com.epam.esm.repository.query.CertificateQuery.FIND_COUNT_RECORDS;
+import static com.epam.esm.repository.query.CertificateQuery.FIND_COUNT_BY_TAG_NAME;
+import static com.epam.esm.repository.query.CertificateQuery.FIND_COUNT_CERTIFICATES_BY_PART_NAME_OR_DESCRIPTION;
+
 /**
  * The interface Certificate repository contains methods for certificates.
  *
@@ -42,7 +50,7 @@ public interface CertificateRepository extends JpaRepository<GiftCertificate, Lo
      * @param duration      the duration
      */
     @Modifying
-    @Query(value = "UPDATE gift_certificate SET duration = :duration WHERE gift_certificate_id = :certificateId", nativeQuery = true)
+    @Query(value = UPDATE_CERTIFICATE_DURATION, nativeQuery = true)
     void updateDuration(@Param("certificateId") long certificateId, @Param("duration") int duration);
 
     /**
@@ -52,15 +60,35 @@ public interface CertificateRepository extends JpaRepository<GiftCertificate, Lo
      * @param price         the price
      */
     @Modifying
-    @Query(value = "UPDATE gift_certificate SET price = :price WHERE gift_certificate_id = :certificateId", nativeQuery = true)
+    @Query(value = UPDATE_CERTIFICATE_PRICE, nativeQuery = true)
     void updatePrice(@Param("certificateId") long certificateId, @Param("price") BigDecimal price);
 
+    /**
+     * Delete gift certificate by id int.
+     *
+     * @param id the id
+     * @return the int
+     */
     int deleteGiftCertificateById(long id);
 
-    @Query(value = "SELECT certificates FROM GiftCertificate certificates JOIN certificates.tags tags WHERE tags.name = :name")
+    /**
+     * Show by tag name list.
+     *
+     * @param name     the name
+     * @param pageable the pageable
+     * @return the list
+     */
+    @Query(value = SHOW_CERTIFICATE_BY_TAG_NAME)
     List<GiftCertificate> showByTagName(@Param("name") String name, Pageable pageable);
 
-    @Query(value = "SELECT g FROM GiftCertificate g WHERE g.name LIKE %:partName% OR g.description LIKE %:partName%")
+    /**
+     * Find gift certificates by part name or description list.
+     *
+     * @param partName the part name
+     * @param pageable the pageable
+     * @return the list
+     */
+    @Query(value = FIND_CERTIFICATES_BY_PART_NAME_OR_DESCRIPTION)
     List<GiftCertificate> findGiftCertificatesByPartNameOrDescription(@Param("partName") String partName, Pageable pageable);
 
     /**
@@ -68,7 +96,7 @@ public interface CertificateRepository extends JpaRepository<GiftCertificate, Lo
      *
      * @return the int
      */
-    @Query(value = "SELECT COUNT(*) FROM gift_certificate", nativeQuery = true)
+    @Query(value = FIND_COUNT_RECORDS, nativeQuery = true)
     int findCountRecords();
 
     /**
@@ -77,14 +105,16 @@ public interface CertificateRepository extends JpaRepository<GiftCertificate, Lo
      * @param tagName the tag name
      * @return the int
      */
-    @Query(value = "SELECT COUNT(*) FROM gift_certificate JOIN tags_gift_certificates " +
-            "ON  tags_gift_certificates.gift_certificate_id = gift_certificate.gift_certificate_id " +
-            "JOIN tag ON tag.tag_id = tags_gift_certificates.tag_id WHERE tag.name = :tagName", nativeQuery = true)
+    @Query(value = FIND_COUNT_BY_TAG_NAME, nativeQuery = true)
     int findCountByTagName(@Param("tagName") String tagName);
 
 
-    @Query("SELECT COUNT(g) FROM GiftCertificate g WHERE g.name  LIKE %:partName% OR g.description LIKE %:partName%")
+    /**
+     * Count gift certificate by part name or description int.
+     *
+     * @param partName the part name
+     * @return the int
+     */
+    @Query(value = FIND_COUNT_CERTIFICATES_BY_PART_NAME_OR_DESCRIPTION)
     int countGiftCertificateByPartNameOrDescription(@Param("partName") String partName);
-
-
 }

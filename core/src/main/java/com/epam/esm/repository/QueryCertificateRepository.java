@@ -4,6 +4,9 @@ import com.epam.esm.model.entity.GiftCertificate;
 
 import java.util.List;
 
+/**
+ * The interface Query certificate repository.
+ */
 public interface QueryCertificateRepository {
 
     /**

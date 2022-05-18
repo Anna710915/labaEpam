@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * The interface Order service.
+ *
  * @author Anna Merkul
  */
 public interface OrderService {
@@ -17,6 +18,14 @@ public interface OrderService {
      */
     long createOrder(OrderDto orderDto);
 
+    /**
+     * Find paginated user orders list.
+     *
+     * @param userId the user id
+     * @param page   the page
+     * @param size   the size
+     * @return the list
+     */
     List<OrderDto> findPaginatedUserOrders(long userId, int page, int size);
 
     /**

@@ -21,6 +21,13 @@ public interface CertificateService {
     long create(CertificateDto certificateDto);
 
 
+    /**
+     * Show all list.
+     *
+     * @param page   the page
+     * @param offset the offset
+     * @return the list
+     */
     List<CertificateDto> showAll(int page, int offset);
 
     /**
@@ -40,15 +47,52 @@ public interface CertificateService {
     void update(CertificateDto newDto, long id);
 
 
+    /**
+     * Show by tag name list.
+     *
+     * @param page    the page
+     * @param size    the size
+     * @param tagName the tag name
+     * @return the list
+     */
     List<CertificateDto> showByTagName(int page, int size, String tagName);
 
 
+    /**
+     * Show by part word list.
+     *
+     * @param page     the page
+     * @param size     the size
+     * @param partWord the part word
+     * @return the list
+     */
     List<CertificateDto> showByPartWord(int page, int size, String partWord);
 
+    /**
+     * Sort by name list.
+     *
+     * @param page the page
+     * @param size the size
+     * @return the list
+     */
     List<CertificateDto> sortByName(int page, int size);
 
+    /**
+     * Sort by date list.
+     *
+     * @param page the page
+     * @param size the size
+     * @return the list
+     */
     List<CertificateDto> sortByDate(int page, int size);
 
+    /**
+     * Both sort list.
+     *
+     * @param page the page
+     * @param size the size
+     * @return the list
+     */
     List<CertificateDto> bothSort(int page, int size);
 
     /**
@@ -75,6 +119,14 @@ public interface CertificateService {
      */
     void updateCertificatePrice(long certificateId, BigDecimal price);
 
+    /**
+     * Find certificates by query list.
+     *
+     * @param limit  the limit
+     * @param offset the offset
+     * @param query  the query
+     * @return the list
+     */
     List<CertificateDto> findCertificatesByQuery(int limit, int offset, String query);
 
     /**

@@ -11,11 +11,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * The type Jwt user details service.
+ */
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
 
+    /**
+     * Instantiates a new Jwt user details service.
+     *
+     * @param userService the user service
+     */
     @Autowired
     public JwtUserDetailsService(UserService userService){
         this.userService = userService;

@@ -13,11 +13,19 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+/**
+ * The type Jwt token filter.
+ */
 @Component
 public class JwtTokenFilter extends GenericFilterBean {
 
     private final JwtUtil jwtUtil;
 
+    /**
+     * Instantiates a new Jwt token filter.
+     *
+     * @param jwtUtil the jwt util
+     */
     @Autowired
     public JwtTokenFilter(JwtUtil jwtUtil){
         this.jwtUtil = jwtUtil;

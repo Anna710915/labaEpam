@@ -11,6 +11,13 @@ import java.util.List;
  */
 public interface TagService {
 
+    /**
+     * Show all list.
+     *
+     * @param page the page
+     * @param size the size
+     * @return the list
+     */
     List<TagDto> showAll(int page, int size);
 
     /**

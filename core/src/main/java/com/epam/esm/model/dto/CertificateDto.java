@@ -4,6 +4,10 @@ import com.epam.esm.model.entity.Tag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.hateoas.RepresentationModel;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,10 +18,23 @@ import java.util.List;
  * @author Anna Merkul
  */
 public class CertificateDto extends RepresentationModel<CertificateDto> {
+
     private long id;
+
+    @Pattern(regexp = "[\\w\\p{Blank}А-Яа-я]+", message = "{invalid_certificate_name}")
+    @Size(min = 2, max = 100, message = "{size_certificate_name}")
     private String name;
+
+    @Pattern(regexp = "[^<>]+", message = "{invalid_description}")
+    @Size(max = 120, message = "{size_certificate_description}")
     private String description;
+
+    @Min(value = 5, message = "{min_certificate_price}")
+    @Max(value = 100000, message = "{max_certificate_price}")
     private BigDecimal price;
+
+    @Min(value = 1, message = "{min_certificate_duration}")
+    @Max(value = 365, message = "{max_certificate_duration}")
     private int duration;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

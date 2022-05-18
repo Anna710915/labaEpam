@@ -3,14 +3,26 @@ package com.epam.esm.permission;
 import org.springframework.http.HttpMethod;
 import java.util.Map;
 
+/**
+ * The enum User permission.
+ */
 public enum UserPermission {
 
+    /**
+     * The Guest.
+     */
     GUEST(Map.of(HttpMethod.GET, new String[]{"/certificates/tag/**", "/certificates/certificate/**"},
             HttpMethod.POST, new String[]{"/certificates/login", "/certificates/signup"})),
 
+    /**
+     * The Client.
+     */
     CLIENT(Map.of(
             HttpMethod.GET, new String[]{"/certificates/orders/**", "/certificates/orders/user/**" },
             HttpMethod.POST, new String[]{"/certificates/order"})),
+    /**
+     * The Admin.
+     */
     ADMIN(Map.of(
             HttpMethod.PATCH, new String[]{"/certificates/certificate/**"},
             HttpMethod.PUT, new String[]{"/certificates/certificate/**"},
@@ -23,6 +35,11 @@ public enum UserPermission {
         this.permissions = permissions;
     }
 
+    /**
+     * Gets permissions.
+     *
+     * @return the permissions
+     */
     public Map<HttpMethod, String[]> getPermissions() {
         return permissions;
     }

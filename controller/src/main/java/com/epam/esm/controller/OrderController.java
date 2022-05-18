@@ -6,9 +6,7 @@ import com.epam.esm.exception.CustomExternalException;
 import com.epam.esm.pagination.Pagination;
 import com.epam.esm.permission.UserPermission;
 import com.epam.esm.security.JwtUser;
-import com.epam.esm.security.JwtUtil;
 import com.epam.esm.service.OrderService;
-import com.epam.esm.service.UserService;
 import com.epam.esm.util.MessageLanguageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -37,26 +35,27 @@ public class OrderController {
     private static final int START_PAGE = 1;
     private static final int START_SIZE = 2;
 
-    private final JwtUtil jwtUtil;
     private final OrderService orderService;
-    private final UserService userService;
     private final MessageLanguageUtil messageLanguageUtil;
 
+    /**
+     * Instantiates a new Order controller.
+     *
+     * @param orderService        the order service
+     * @param messageLanguageUtil the message language util
+     */
     @Autowired
     public OrderController(OrderService orderService,
-                           UserService userService,
-                           MessageLanguageUtil messageLanguageUtil,
-                           JwtUtil jwtUtil){
+                           MessageLanguageUtil messageLanguageUtil){
         this.orderService = orderService;
         this.messageLanguageUtil = messageLanguageUtil;
-        this.jwtUtil = jwtUtil;
-        this.userService = userService;
     }
 
     /**
      * Create order response entity.
      *
      * @param orderDto the order dto
+     * @param jwtUser  the jwt user
      * @return the response entity
      */
     @PostMapping(value = "/order")
@@ -76,8 +75,9 @@ public class OrderController {
     /**
      * Find paginated user orders collection model.
      *
-     * @param page   the page
-     * @param size   the size
+     * @param page    the page
+     * @param size    the size
+     * @param jwtUser the jwt user
      * @return the collection model
      */
     @GetMapping(value = "/orders/user", produces = "application/json")
@@ -101,7 +101,9 @@ public class OrderController {
 
     /**
      * Find user order dto.
+     *
      * @param orderId the order id
+     * @param jwtUser the jwt user
      * @return the order dto
      */
     @GetMapping(value = "/orders/user/{id}", produces = "application/json")

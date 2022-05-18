@@ -7,7 +7,6 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.util.MessageLanguageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +18,7 @@ import java.util.List;
  * The type Tag service implements methods of the TagService
  * interface. The class is annotated as a service, which qualifies it to be
  * automatically created by component-scanning.
+ *
  * @author Anna Merkul
  */
 @Service
@@ -30,7 +30,8 @@ public class TagServiceImpl  implements TagService{
     /**
      * Instantiates a new Tag service.
      *
-     * @param tagRepository the tag repository
+     * @param tagRepository       the tag repository
+     * @param messageLanguageUtil the message language util
      */
     @Autowired
     public TagServiceImpl(TagRepository tagRepository,

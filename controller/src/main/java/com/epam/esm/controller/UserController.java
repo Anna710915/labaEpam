@@ -1,8 +1,11 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.dto.AuthenticationRequestDto;
+import com.epam.esm.dto.AuthenticationResponseDto;
 import com.epam.esm.model.dto.UserDto;
 import com.epam.esm.security.JwtUtil;
 import com.epam.esm.service.UserService;
+import com.epam.esm.util.MessageLanguageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,55 +16,78 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * The type User controller.
+ */
 @RestController
 @RequestMapping(value = "/certificates")
 public class UserController {
 
     private final AuthenticationManager authenticationManager;
+    private final MessageLanguageUtil messageLanguageUtil;
     private final JwtUtil jwtUtil;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Instantiates a new User controller.
+     *
+     * @param authenticationManager the authentication manager
+     * @param jwtUtil               the jwt util
+     * @param userService           the user service
+     * @param passwordEncoder       the password encoder
+     * @param messageLanguageUtil   the message language util
+     */
     @Autowired
     public UserController(AuthenticationManager authenticationManager,
                           JwtUtil jwtUtil, UserService userService,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          MessageLanguageUtil messageLanguageUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.messageLanguageUtil = messageLanguageUtil;
     }
 
-    @PostMapping(value = "/login", consumes = "application/json")
-    public ResponseEntity<?> login(@RequestBody UserDto requestDto){
+    /**
+     * Login response entity.
+     *
+     * @param requestDto the request dto
+     * @return the response entity
+     */
+    @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<AuthenticationResponseDto> login(@RequestBody AuthenticationRequestDto requestDto){
         try{
             String username = requestDto.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
             UserDto userDto = userService.findUserByName(username);
             if (userDto == null){
-                throw new UsernameNotFoundException("User with username: " + username + "not found");
+                throw new UsernameNotFoundException(messageLanguageUtil.getMessage("not_found.user") + username);
             }
             String token = jwtUtil.createToken(username, List.of(userDto.getRole()));
-            Map<Object, Object> response = new HashMap<>();
-            response.put("username", username);
-            response.put("token", token);
-            return ResponseEntity.ok(response);
+            return new ResponseEntity<>(new AuthenticationResponseDto(username, token), HttpStatus.OK);
         } catch (AuthenticationException e){
-            throw new BadCredentialsException("Invalid username or password", e);
+            throw new BadCredentialsException(messageLanguageUtil.getMessage("bad_request.invalid_username_or_password"), e);
         }
     }
 
+    /**
+     * Sign up response entity.
+     *
+     * @param builder the builder
+     * @param userDto the user dto
+     * @return the response entity
+     */
     @PostMapping(value = "/signup", consumes = "application/json")
-    public ResponseEntity<?> signUp(UriComponentsBuilder builder, @RequestBody UserDto userDto){
+    public ResponseEntity<?> signUp(UriComponentsBuilder builder, @Valid @RequestBody UserDto userDto){
         String password = userDto.getPassword();
         userDto.setPassword(passwordEncoder.encode(password));
         UserDto newUser = userService.signUpUser(userDto);

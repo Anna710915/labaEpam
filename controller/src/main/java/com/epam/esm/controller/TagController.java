@@ -3,7 +3,6 @@ package com.epam.esm.controller;
 import com.epam.esm.model.dto.TagDto;
 import com.epam.esm.exception.CustomNotFoundException;
 import com.epam.esm.pagination.Pagination;
-import com.epam.esm.security.JwtUtil;
 import com.epam.esm.service.TagService;
 import com.epam.esm.util.MessageLanguageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
@@ -26,8 +24,6 @@ import java.util.List;
 @RequestMapping("/certificates")
 public class TagController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
     private final TagService tagService;
     private final MessageLanguageUtil messageLanguageUtil;
 
@@ -39,13 +35,9 @@ public class TagController {
      */
     @Autowired
     public TagController(TagService tagService,
-                         MessageLanguageUtil messageLanguageUtil,
-                         AuthenticationManager authenticationManager,
-                         JwtUtil jwtUtil) {
+                         MessageLanguageUtil messageLanguageUtil) {
         this.tagService = tagService;
         this.messageLanguageUtil = messageLanguageUtil;
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
     }
 
     /**

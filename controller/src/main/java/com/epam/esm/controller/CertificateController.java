@@ -1,14 +1,14 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.dto.CertificateDurationDto;
+import com.epam.esm.dto.CertificatePriceDto;
 import com.epam.esm.model.dto.CertificateDto;
 import com.epam.esm.exception.CustomExternalException;
 import com.epam.esm.exception.CustomNotFoundException;
-import com.epam.esm.exception.CustomNotValidArgumentException;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.pagination.Pagination;
 import com.epam.esm.service.CertificateService;
 import com.epam.esm.util.MessageLanguageUtil;
-import com.epam.esm.validator.CertificateDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -16,11 +16,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.math.BigDecimal;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,42 +47,24 @@ public class CertificateController {
     private static final int START_PAGE = 1;
     private static final int START_SIZE = 2;
     private final CertificateService certificateService;
-    private final CertificateDtoValidator certificateDtoValidator;
     private final MessageLanguageUtil messageLanguageUtil;
 
     /**
      * Instantiates a new Controller.
      *
      * @param certificateService      the certificate service
-     * @param certificateDtoValidator the certificate dto validator
      * @param messageLanguageUtil     the message language util
      */
     @Autowired
     public CertificateController(CertificateService certificateService,
-                                 CertificateDtoValidator certificateDtoValidator,
                                  MessageLanguageUtil messageLanguageUtil){
         this.certificateService = certificateService;
-        this.certificateDtoValidator = certificateDtoValidator;
         this.messageLanguageUtil = messageLanguageUtil;
     }
 
-    /**
-     * Create response entity which contains certificate dto, the location of the created
-     * certificate and http status.
-     *
-     * @param builder        the builder
-     * @param certificateDto the certificate dto
-     * @param bindingResult  the binding result
-     * @return the response entity
-     */
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<CertificateDto> create(UriComponentsBuilder builder,
-                                                  @RequestBody CertificateDto certificateDto,
-                                                  BindingResult bindingResult){
-        certificateDtoValidator.validate(certificateDto, bindingResult);
-        if(bindingResult.hasErrors()){
-            throw new CustomNotValidArgumentException(messageLanguageUtil.getMessage("not_valid.certificate_argument") + bindingResult);
-        }
+                                                  @Valid @RequestBody CertificateDto certificateDto){
         long createdId = certificateService.create(certificateDto);
         HttpStatus status = createdId < 1 ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.CREATED;
         if(status == HttpStatus.INTERNAL_SERVER_ERROR){
@@ -239,17 +220,11 @@ public class CertificateController {
      *
      * @param id                the id
      * @param updateCertificate the update certificate
-     * @param bindingResult     the binding result
      * @return the certificate dto
      */
     @PutMapping(value = "/certificate/{id}/update", consumes = "application/json")
     public CertificateDto updateCertificate(@PathVariable long id,
-                                            @RequestBody CertificateDto updateCertificate,
-                                            BindingResult bindingResult){
-        certificateDtoValidator.validate(updateCertificate, bindingResult);
-        if(bindingResult.hasErrors()){
-            throw new CustomNotValidArgumentException(messageLanguageUtil.getMessage("not_valid.certificate_argument") + bindingResult);
-        }
+                                            @Valid @RequestBody CertificateDto updateCertificate){
         certificateService.update(updateCertificate, id);
         CertificateDto certificateDto = certificateService.showCertificateWithTags(id);
         addLinksForCertificate(certificateDto);
@@ -260,12 +235,12 @@ public class CertificateController {
      * Update certificate price certificate dto.
      *
      * @param id    the id
-     * @param price the price
+     * @param priceDto the price
      * @return the certificate dto
      */
     @PatchMapping(value = "/certificate/{id}/price", produces = "application/json")
-    public CertificateDto updateCertificatePrice(@PathVariable long id, @RequestBody BigDecimal price){
-        certificateService.updateCertificatePrice(id, price);
+    public CertificateDto updateCertificatePrice(@PathVariable long id, @Valid @RequestBody CertificatePriceDto priceDto){
+        certificateService.updateCertificatePrice(id, priceDto.getPrice());
         CertificateDto certificateDto = certificateService.showCertificateWithTags(id);
         addLinksForCertificate(certificateDto);
         return certificateDto;
@@ -275,12 +250,12 @@ public class CertificateController {
      * Update certificate duration certificate dto.
      *
      * @param id       the id
-     * @param duration the duration
+     * @param durationDto the duration
      * @return the certificate dto
      */
     @PatchMapping(value = "/certificate/{id}/duration", produces = "application/json")
-    public CertificateDto updateCertificateDuration(@PathVariable long id, @RequestBody int duration){
-        certificateService.updateCertificateDuration(id, duration);
+    public CertificateDto updateCertificateDuration(@PathVariable long id, @Valid @RequestBody CertificateDurationDto durationDto){
+        certificateService.updateCertificateDuration(id, durationDto.getDuration());
         CertificateDto certificateDto = certificateService.showCertificateWithTags(id);
         addLinksForCertificate(certificateDto);
         return certificateDto;

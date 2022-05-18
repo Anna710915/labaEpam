@@ -24,6 +24,9 @@ CREATE TABLE tags_gift_certificates(
 );
 
 ALTER TABLE tags_gift_certificates
+ADD PRIMARY KEY (tag_id, gift_certificate_id);
+
+ALTER TABLE tags_gift_certificates
 ADD CONSTRAINT certificate_key
 FOREIGN KEY (gift_certificate_id) REFERENCES gift_certificate(gift_certificate_id)
 ON DELETE CASCADE ON UPDATE CASCADE;

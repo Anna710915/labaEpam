@@ -1,18 +1,17 @@
 package com.epam.esm.repository.impl;
 
 import com.epam.esm.config.DevelopmentConfig;
-import com.epam.esm.exception.CustomNotFoundException;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.OrderCertificate;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.repository.OrderRepository;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -47,9 +46,8 @@ public class OrderRepositoryImplTest {
         orderCertificate.setAmount(1);
         orderCertificate.setOrder(order);
         order.setOrderCertificates(List.of(orderCertificate));
-        long actual = orderRepository.createOrder(order);
-        long expected = 3L;
-        assertEquals(expected, actual);
+        Order actual = orderRepository.save(order);
+        assertNotNull(actual);
     }
 
     @Test
@@ -61,20 +59,14 @@ public class OrderRepositoryImplTest {
 
     @Test
     void findUserOrderList(){
-        List<Order> orders = orderRepository.selectPaginatedUserOrders(1L, 1, 0);
+        List<Order> orders = orderRepository.findOrdersByUser_UserId(1L, PageRequest.of(0, 1));
         int expected = 1;
         assertEquals(expected, orders.size());
     }
 
-//    @Test
-//    void findOrderByIdTest(){
-//        Order order = orderRepository.findUserOrder(1L);
-//        assertNotNull(order);
-//    }
-//
-//    @Test
-//    void findOrderByUserIdException(){
-//        Assertions.assertThrows(CustomNotFoundException.class, () ->
-//                orderRepository.findUserOrder(5L));
-//    }
+    @Test
+    void findOrderByIdTest(){
+        Order order = orderRepository.findOrderByOrderId(1L);
+        assertNotNull(order);
+    }
 }

@@ -13,37 +13,30 @@ import javax.persistence.Query;
 
 import java.util.List;
 
+import static com.epam.esm.repository.query.CertificateQuery.SQL_FIND_BY_TAGS_START;
+import static com.epam.esm.repository.query.CertificateQuery.SQL_FIND_BY_TAGS_UNION;
+import static com.epam.esm.repository.query.CertificateQuery.SQL_FIND_BY_TAGS_END;
+
 /**
  * The type Certificate repository implements methods of the CertificateRepository
  * interface. The class is annotated with as a repository, which qualifies it to be
  * automatically created by component-scanning.
+ *
  * @author Anna Merkul.
  */
 @Repository
 @Transactional
 public class CertificateRepositoryImpl  implements QueryCertificateRepository {
 
-    private static final String SQL_FIND_BY_TAGS_START = """
-            SELECT gift_certificate_id, name, description, price, duration, create_date, last_update_date  FROM (
-                            SELECT gift_certificate.*, tag.name AS tag_name FROM gift_certificate
-                            JOIN tags_gift_certificates ON gift_certificate.gift_certificate_id = tags_gift_certificates.gift_certificate_id\s
-                            JOIN tag ON tag.tag_id = tags_gift_certificates.tag_id
-                            WHERE tag.name = '""";
-    private static final String SQL_FIND_BY_TAGS_UNION = """
-            '
-                            UNION SELECT gift_certificate.*, tag.name AS tag_name FROM gift_certificate
-                            JOIN tags_gift_certificates ON gift_certificate.gift_certificate_id = tags_gift_certificates.gift_certificate_id
-                            JOIN tag ON tag.tag_id = tags_gift_certificates.tag_id
-                            WHERE tag.name= '""";
-    private static final String SQL_FIND_BY_TAGS_END = """
-            ') AS used_tags_certificates
-                                   GROUP BY gift_certificate_id
-                                   HAVING COUNT(tag_name) =""";
-
     private static final int FIRST_TAG_INDEX = 0;
 
     private final EntityManager entityManager;
 
+    /**
+     * Instantiates a new Certificate repository.
+     *
+     * @param entityManager the entity manager
+     */
     @Autowired
     public CertificateRepositoryImpl(EntityManager entityManager){
         this.entityManager = entityManager;

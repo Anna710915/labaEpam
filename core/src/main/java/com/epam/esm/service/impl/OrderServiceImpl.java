@@ -18,12 +18,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Order service.
+ */
 @Service
 public class OrderServiceImpl implements OrderService{
 
     private final OrderRepository orderRepository;
     private final MessageLanguageUtil messageLanguageUtil;
 
+    /**
+     * Instantiates a new Order service.
+     *
+     * @param orderRepository     the order repository
+     * @param messageLanguageUtil the message language util
+     */
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository,
                             MessageLanguageUtil messageLanguageUtil){

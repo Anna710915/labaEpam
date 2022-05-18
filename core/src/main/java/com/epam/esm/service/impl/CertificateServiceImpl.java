@@ -1,7 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.exception.CustomNotFoundException;
-import com.epam.esm.exception.CustomNotValidArgumentException;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.dto.CertificateDto;
 import com.epam.esm.model.entity.Tag;
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
  * The type Certificate service implements methods of the CertificateService
  * interface. The class is annotated as a service, which qualifies it to be
  * automatically created by component-scanning.
+ *
  * @author Anna Merkul
  */
 @Service
@@ -41,6 +41,7 @@ public class CertificateServiceImpl implements CertificateService {
      *
      * @param certificateRepository the certificate repository
      * @param tagRepository         the tag repository
+     * @param messageLanguageUtil   the message language util
      */
     @Autowired
     public CertificateServiceImpl(CertificateRepository certificateRepository,
@@ -103,14 +104,12 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     @Transactional
     public void updateCertificateDuration(long certificateId, int duration) {
-        checkPositiveDuration(duration);
         certificateRepository.updateDuration(certificateId, duration);
     }
 
     @Override
     @Transactional
     public void updateCertificatePrice(long certificateId, BigDecimal price) {
-        checkPositivePrice(price);
         certificateRepository.updatePrice(certificateId, price);
     }
 
@@ -244,18 +243,6 @@ public class CertificateServiceImpl implements CertificateService {
     private void checkUpdateUniqueCertificateName(GiftCertificate uniqCertificate, long updateId){
         if(uniqCertificate != null && uniqCertificate.getId() != updateId){
             throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_valid.not_uniq_certificate") + uniqCertificate.getName());
-        }
-    }
-
-    private void checkPositiveDuration(int duration){
-        if(duration < 0 || duration > 365) {
-            throw new CustomNotValidArgumentException(messageLanguageUtil.getMessage("not_valid.duration") + duration);
-        }
-    }
-
-    private void checkPositivePrice(BigDecimal price){
-        if(price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new CustomNotValidArgumentException(messageLanguageUtil.getMessage("not_valid.price") + price);
         }
     }
 

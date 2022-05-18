@@ -5,6 +5,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+/**
+ * The type Jwt user.
+ */
 public class JwtUser implements UserDetails {
 
     private long userId;
@@ -12,6 +15,14 @@ public class JwtUser implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
+    /**
+     * Instantiates a new Jwt user.
+     *
+     * @param userId      the user id
+     * @param username    the username
+     * @param password    the password
+     * @param authorities the authorities
+     */
     public JwtUser(long userId, String username, String password, Collection<? extends GrantedAuthority> authorities){
         this.userId = userId;
         this.username = username;
@@ -24,6 +35,11 @@ public class JwtUser implements UserDetails {
         return authorities;
     }
 
+    /**
+     * Get user id long.
+     *
+     * @return the long
+     */
     public long getUserId(){
         return userId;
     }
