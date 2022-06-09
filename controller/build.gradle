@@ -38,6 +38,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation:2.6.7'
 }
 
+sonarqube {
+    properties {
+        property "sonar.login", System.getenv("admin")
+        property "sonar.password", System.getenv("16fduecn2002")
+    }
+}
+
 test {
     useJUnitPlatform()
 }
