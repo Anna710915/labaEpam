@@ -337,16 +337,14 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CertificateDto{");
-        sb.append("id=").append(id);
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", price=").append(price);
-        sb.append(", duration=").append(duration);
-        sb.append(", createDate=").append(createDate);
-        sb.append(", lastUpdateDate=").append(lastUpdateDate);
-        sb.append(", tagSet=").append(tags);
-        sb.append('}');
-        return sb.toString();
+        return "CertificateDto{" + "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", duration=" + duration +
+                ", createDate=" + createDate +
+                ", lastUpdateDate=" + lastUpdateDate +
+                ", tagSet=" + tags +
+                '}';
     }
 }

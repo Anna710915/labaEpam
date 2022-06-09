@@ -21,12 +21,21 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The type Security config.
+ */
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final JwtTokenFilter jwtTokenFilter;
 
+    /**
+     * Instantiates a new Security config.
+     *
+     * @param userDetailsService the user details service
+     * @param jwtTokenFilter     the jwt token filter
+     */
     @Autowired
     public SecurityConfig(UserDetailsService userDetailsService,
                           JwtTokenFilter jwtTokenFilter){
@@ -34,6 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.jwtTokenFilter = jwtTokenFilter;
     }
 
+    /**
+     * Password encoder password encoder.
+     *
+     * @return the password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

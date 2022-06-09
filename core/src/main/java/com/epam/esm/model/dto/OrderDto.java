@@ -157,13 +157,11 @@ public class OrderDto extends RepresentationModel<OrderDto> {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("OrderDto{");
-        sb.append("orderId=").append(orderId);
-        sb.append(", orderCost=").append(orderCost);
-        sb.append(", orderDate=").append(orderDate);
-        sb.append(", orderComponentDtos=").append(orderComponentDtos);
-        sb.append(", userId=").append(userId);
-        sb.append('}');
-        return sb.toString();
+        return "OrderDto{" + "orderId=" + orderId +
+                ", orderCost=" + orderCost +
+                ", orderDate=" + orderDate +
+                ", orderComponentDtos=" + orderComponentDtos +
+                ", userId=" + userId +
+                '}';
     }
 }

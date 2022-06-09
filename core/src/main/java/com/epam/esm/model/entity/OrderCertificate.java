@@ -148,12 +148,10 @@ public class OrderCertificate{
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("OrderCertificate{");
-        sb.append("orderGiftCertificateId=").append(orderGiftCertificateId);
-        sb.append(", order=").append(order);
-        sb.append(", giftCertificate=").append(giftCertificate);
-        sb.append(", amount=").append(amount);
-        sb.append('}');
-        return sb.toString();
+        return "OrderCertificate{" + "orderGiftCertificateId=" + orderGiftCertificateId +
+                ", order=" + order +
+                ", giftCertificate=" + giftCertificate +
+                ", amount=" + amount +
+                '}';
     }
 }

@@ -86,10 +86,8 @@ public class OrderComponentDto extends RepresentationModel<OrderComponentDto> {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("OrderComponentDto{");
-        sb.append("giftCertificate=").append(giftCertificate);
-        sb.append(", amount=").append(amount);
-        sb.append('}');
-        return sb.toString();
+        return "OrderComponentDto{" + "giftCertificate=" + giftCertificate +
+                ", amount=" + amount +
+                '}';
     }
 }

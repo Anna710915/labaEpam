@@ -52,9 +52,7 @@ public class CertificateDurationDto {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CertificateDurationDto{");
-        sb.append("duration=").append(duration);
-        sb.append('}');
-        return sb.toString();
+        return "CertificateDurationDto{" + "duration=" + duration +
+                '}';
     }
 }

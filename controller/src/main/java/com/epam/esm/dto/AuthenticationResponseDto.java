@@ -80,10 +80,8 @@ public class AuthenticationResponseDto {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("AuthenticationResponseDto{");
-        sb.append("username='").append(username).append('\'');
-        sb.append(", token='").append(token).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "AuthenticationResponseDto{" + "username='" + username + '\'' +
+                ", token='" + token + '\'' +
+                '}';
     }
 }

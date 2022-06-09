@@ -80,10 +80,8 @@ public class AuthenticationRequestDto {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("AuthenticationRequestDto{");
-        sb.append("login='").append(username).append('\'');
-        sb.append(", password='").append(password).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "AuthenticationRequestDto{" + "login='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

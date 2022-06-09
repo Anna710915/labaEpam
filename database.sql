@@ -148,6 +148,9 @@ select * from orders_gift_certificates;
 
 CALL `add_login_password`();
 
+select * from users
+where username = 'Name_10000';
+
 
 
 

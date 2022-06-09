@@ -48,9 +48,7 @@ public class CertificatePriceDto {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CertificatePriceDto{");
-        sb.append("price=").append(price);
-        sb.append('}');
-        return sb.toString();
+        return "CertificatePriceDto{" + "price=" + price +
+                '}';
     }
 }

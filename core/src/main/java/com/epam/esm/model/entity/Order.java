@@ -198,13 +198,11 @@ public class Order {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Order{");
-        sb.append("orderId=").append(orderId);
-        sb.append(", orderCost=").append(orderCost);
-        sb.append(", orderDate=").append(orderDate);
-        sb.append(", user=").append(user);
-        sb.append(", orderCertificates=").append(orderCertificates);
-        sb.append('}');
-        return sb.toString();
+        return "Order{" + "orderId=" + orderId +
+                ", orderCost=" + orderCost +
+                ", orderDate=" + orderDate +
+                ", user=" + user +
+                ", orderCertificates=" + orderCertificates +
+                '}';
     }
 }

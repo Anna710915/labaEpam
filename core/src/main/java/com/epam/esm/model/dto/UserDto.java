@@ -97,12 +97,10 @@ public class UserDto {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("UserDto{");
-        sb.append("userId=").append(userId);
-        sb.append(", username='").append(username).append('\'');
-        sb.append(", password='").append(password).append('\'');
-        sb.append(", role=").append(role);
-        sb.append('}');
-        return sb.toString();
+        return "UserDto{" + "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
     }
 }
