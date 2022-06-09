@@ -10,7 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -22,20 +24,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class TagServiceImplTest {
 
     private TagService tagService;
+    @Autowired
+    private MessageLanguageUtil messageLanguageUtil;
     private TagRepository mock = Mockito.mock(TagRepository.class);
-    private final MessageLanguageUtil messageLanguageUtil = Mockito.mock(MessageLanguageUtil.class);
 
 
     @BeforeEach
     public void setUp(){
-        tagService = new TagServiceImpl(mock);
+        tagService = new TagServiceImpl(mock, messageLanguageUtil);
     }
 
     @Test
     void showAll() {
-        Mockito.when(mock.show(2,1)).thenReturn(List.of(new Tag(1L,"name"), new Tag(2L,"sea")));
+        Mockito.when(mock.findAll(PageRequest.of(0, 2))).thenReturn(List.of(new Tag(1L,"name"), new Tag(2L,"sea")));
         tagService.showAll(2,1);
-        Mockito.verify(mock).show(2, 1);
+        Mockito.verify(mock).findAll(PageRequest.of(0, 2));
     }
 
     @Test

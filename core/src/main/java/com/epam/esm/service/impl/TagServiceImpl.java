@@ -1,10 +1,13 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.exception.CustomNotFoundException;
 import com.epam.esm.model.dto.TagDto;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
+import com.epam.esm.util.MessageLanguageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,39 +18,46 @@ import java.util.List;
  * The type Tag service implements methods of the TagService
  * interface. The class is annotated as a service, which qualifies it to be
  * automatically created by component-scanning.
+ *
  * @author Anna Merkul
  */
 @Service
-public class TagServiceImpl implements TagService {
+public class TagServiceImpl  implements TagService{
 
     private final TagRepository tagRepository;
+    private final MessageLanguageUtil messageLanguageUtil;
 
     /**
      * Instantiates a new Tag service.
      *
-     * @param tagRepository the tag repository
+     * @param tagRepository       the tag repository
+     * @param messageLanguageUtil the message language util
      */
     @Autowired
-    public TagServiceImpl(TagRepository tagRepository){
+    public TagServiceImpl(TagRepository tagRepository,
+                          MessageLanguageUtil messageLanguageUtil){
+        this.messageLanguageUtil = messageLanguageUtil;
         this.tagRepository = tagRepository;
     }
 
     @Override
     @Transactional
-    public List<TagDto> showAll(int limit, int offset) {
-        List<Tag> tags = tagRepository.show(limit, offset);
+    public List<TagDto> showAll(int page, int size) {
+        List<Tag> tags = tagRepository.findAll(PageRequest.of(page - 1 , size)).getContent();
         return buildListTagDto(tags);
     }
 
     @Override
+    @Transactional
     public boolean delete(long id) {
-        return tagRepository.delete(id);
+        return tagRepository.deleteTagById(id) == 1;
     }
 
     @Override
     @Transactional
     public TagDto showById(long id) {
-        Tag tag = tagRepository.showById(id);
+        Tag tag = tagRepository.findTagById(id);
+        checkTag(tag, id);
         return initTagDto(tag);
     }
 
@@ -59,6 +69,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public int countAllTags() {
         return tagRepository.countAllTags();
     }
@@ -77,5 +88,11 @@ public class TagServiceImpl implements TagService {
         tagDto.setId(tag.getId());
         tagDto.setName(tag.getName());
         return tagDto;
+    }
+
+    private void checkTag(Tag tag, long id){
+        if(tag == null){
+            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_found.tag") + id);
+        }
     }
 }

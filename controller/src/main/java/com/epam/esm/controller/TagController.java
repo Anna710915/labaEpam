@@ -1,6 +1,5 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.attribute.HttpMethodType;
 import com.epam.esm.model.dto.TagDto;
 import com.epam.esm.exception.CustomNotFoundException;
 import com.epam.esm.pagination.Pagination;
@@ -9,6 +8,7 @@ import com.epam.esm.util.MessageLanguageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +30,8 @@ public class TagController {
     /**
      * Instantiates a new Tag controller.
      *
-     * @param tagService the tag service
+     * @param tagService          the tag service
+     * @param messageLanguageUtil the message language util
      */
     @Autowired
     public TagController(TagService tagService,
@@ -55,20 +56,21 @@ public class TagController {
     /**
      * Get tag list.
      *
+     * @param page the page
+     * @param size the size
      * @return the list
      */
     @GetMapping(value = "/tag")
     public CollectionModel<TagDto> getTags(@RequestParam("page") int page,
                                            @RequestParam("size") int size){
-        int offset = Pagination.offset(page, size);
         int totalRecords = tagService.countAllTags();
         int pages = Pagination.findPages(totalRecords, size);
         int lastPage = Pagination.findLastPage(pages, size, totalRecords);
         Link prevLink = linkTo(methodOn(TagController.class).getTags(Pagination.findPrevPage(page), size))
-                .withRel("prev").withType(HttpMethodType.GET.name());
+                .withRel("prev").withType(HttpMethod.GET.name());
         Link nextLink = linkTo(methodOn(TagController.class).getTags(Pagination.findNextPage(page, lastPage), size))
-                .withRel("next").withType(HttpMethodType.GET.name());
-        List<TagDto> tagDtos = tagService.showAll(size, offset);
+                .withRel("next").withType(HttpMethod.GET.name());
+        List<TagDto> tagDtos = tagService.showAll(page, size);
         addDeleteLinksForTags(tagDtos);
         return CollectionModel.of(tagDtos, prevLink, nextLink);
     }
@@ -89,11 +91,16 @@ public class TagController {
         return new ResponseEntity<>(emptyTag, HttpStatus.OK);
     }
 
+    /**
+     * Find popular user tag collection model.
+     *
+     * @return the collection model
+     */
     @GetMapping(value = "/tag/popular", produces = "application/json")
     public CollectionModel<TagDto> findPopularUserTag(){
         List<TagDto> tagDtos = tagService.showWidelyUserTagWithHighestOrdersCost();
         Link allTagsLink = linkTo(methodOn(TagController.class).getTags(1, 3))
-                .withRel("tags").withType(HttpMethodType.GET.name());
+                .withRel("tags").withType(HttpMethod.GET.name());
         return CollectionModel.of(tagDtos, allTagsLink);
     }
 
@@ -101,12 +108,12 @@ public class TagController {
         for(TagDto tagDto: tagDtos){
             long tagId = tagDto.getId();
             tagDto.add(linkTo(methodOn(TagController.class).deleteTag(tagId))
-                    .withRel("delete_tag").withType(HttpMethodType.DELETE.name()));
+                    .withRel("delete_tag").withType(HttpMethod.DELETE.name()));
         }
     }
 
     private void addAllTagsLink(TagDto tagDto){
         tagDto.add(linkTo(methodOn(TagController.class).getTags(1, 3))
-                .withRel("tags").withType(HttpMethodType.GET.name()));
+                .withRel("tags").withType(HttpMethod.GET.name()));
     }
 }

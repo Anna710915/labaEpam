@@ -4,9 +4,43 @@ import com.epam.esm.model.dto.OrderDto;
 
 import java.util.List;
 
+/**
+ * The interface Order service.
+ *
+ * @author Anna Merkul
+ */
 public interface OrderService {
+    /**
+     * Create order long.
+     *
+     * @param orderDto the order dto
+     * @return the long
+     */
     long createOrder(OrderDto orderDto);
-    List<OrderDto> findPaginatedUserOrders(long userId, int size, int offset);
+
+    /**
+     * Find paginated user orders list.
+     *
+     * @param userId the user id
+     * @param page   the page
+     * @param size   the size
+     * @return the list
+     */
+    List<OrderDto> findPaginatedUserOrders(long userId, int page, int size);
+
+    /**
+     * Find user order order dto.
+     *
+     * @param orderId the order id
+     * @return the order dto
+     */
     OrderDto findUserOrder(long orderId);
+
+    /**
+     * Find total records int.
+     *
+     * @param userId the user id
+     * @return the int
+     */
     int findTotalRecords(long userId);
 }

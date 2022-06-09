@@ -6,15 +6,19 @@ import java.util.List;
 
 /**
  * The interface Tag service contains methods for business logic with tags.
+ *
  * @author Anna Merkul
  */
 public interface TagService {
+
     /**
-     * Show all set of tags.
+     * Show all list.
      *
-     * @return the set
+     * @param page the page
+     * @param size the size
+     * @return the list
      */
-    List<TagDto> showAll(int limit, int offset);
+    List<TagDto> showAll(int page, int size);
 
     /**
      * Delete a tag.
@@ -32,7 +36,17 @@ public interface TagService {
      */
     TagDto showById(long id);
 
+    /**
+     * Show widely user tag with highest orders cost list.
+     *
+     * @return the list
+     */
     List<TagDto> showWidelyUserTagWithHighestOrdersCost();
 
+    /**
+     * Count all tags int.
+     *
+     * @return the int
+     */
     int countAllTags();
 }

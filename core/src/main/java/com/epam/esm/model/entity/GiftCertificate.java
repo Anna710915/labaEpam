@@ -40,7 +40,6 @@ public class GiftCertificate {
     @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
 
-
     @OneToMany(mappedBy = "giftCertificate", cascade = CascadeType.ALL)
     private List<OrderCertificate> orderCertificates = new ArrayList<>();
 
@@ -294,17 +293,15 @@ public class GiftCertificate {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("GiftCertificate{");
-        sb.append("id=").append(id);
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", price=").append(price);
-        sb.append(", duration=").append(duration);
-        sb.append(", createDate=").append(createDate);
-        sb.append(", lastUpdateDate=").append(lastUpdateDate);
-        sb.append(", orderCertificates=").append(orderCertificates);
-        sb.append(", tags=").append(tags);
-        sb.append('}');
-        return sb.toString();
+        return "GiftCertificate{" + "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", duration=" + duration +
+                ", createDate=" + createDate +
+                ", lastUpdateDate=" + lastUpdateDate +
+                ", orderCertificates=" + orderCertificates +
+                ", tags=" + tags +
+                '}';
     }
 }

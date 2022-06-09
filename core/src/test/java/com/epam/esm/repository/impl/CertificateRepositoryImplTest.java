@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -14,7 +16,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,15 +29,14 @@ class CertificateRepositoryImplTest {
 
     @Test
     void create() {
-        long actual = certificateRepository.create(new GiftCertificate("Svarovski","nkdcdnc", BigDecimal.valueOf(150), 35, LocalDateTime.of(2021,6,17,16,11,17),
+        GiftCertificate actual = certificateRepository.save(new GiftCertificate("Svarovski","nkdcdnc", BigDecimal.valueOf(150), 35, LocalDateTime.of(2021,6,17,16,11,17),
                 LocalDateTime.of(2022,1,17,16,15,17)));
-        long expected = 3;
-        assertEquals(expected, actual);
+        assertNotNull(actual);
     }
 
     @Test
     void show() {
-        List<GiftCertificate> certificateList = certificateRepository.show(1,0);
+        List<GiftCertificate> certificateList = certificateRepository.findAll(PageRequest.of(0, 1)).getContent();
         int expected = 1;
         int actual = certificateList.size();
         assertEquals(expected, actual);
@@ -44,7 +44,7 @@ class CertificateRepositoryImplTest {
 
     @Test
     void showNothing(){
-        List<GiftCertificate> certificateList = certificateRepository.show(1,4);
+        List<GiftCertificate> certificateList = certificateRepository.findAll(PageRequest.of(5, 1)).getContent();
         int expected = 0;
         int actual = certificateList.size();
         assertEquals(expected, actual);
@@ -59,33 +59,33 @@ class CertificateRepositoryImplTest {
 
     @Test
     void showById() {
-        GiftCertificate giftCertificate = certificateRepository.showById(2);
+        GiftCertificate giftCertificate = certificateRepository.findGiftCertificateById(2);
         assertNotNull(giftCertificate);
     }
 
     @Test
     void update() {
-        GiftCertificate giftCertificate = certificateRepository.showById(2);
+        GiftCertificate giftCertificate = certificateRepository.findGiftCertificateById(2);
         giftCertificate.setPrice(BigDecimal.valueOf(100));
-        certificateRepository.update(giftCertificate);
+        certificateRepository.save(giftCertificate);
         int expected = 100;
-        int actual = certificateRepository.showById(2).getPrice().intValue();
+        int actual = certificateRepository.findGiftCertificateById(2).getPrice().intValue();
         assertEquals(expected, actual);
     }
 
     @Test
     void delete() {
-        assertTrue(certificateRepository.delete(2));
+        assertEquals(1, certificateRepository.deleteGiftCertificateById(2));
     }
 
     @Test
     void deleteFalse() {
-        assertFalse(certificateRepository.delete(4));
+        assertNotEquals(0, certificateRepository.deleteGiftCertificateById(4));
     }
 
     @Test
     void showByTagName() {
-        List<GiftCertificate> giftCertificateList = certificateRepository.showByTagName(2, 0, "#like");
+        List<GiftCertificate> giftCertificateList = certificateRepository.showByTagName("#like", PageRequest.of(0, 3));
         int expected = 2;
         int actual = giftCertificateList.size();
         assertEquals(expected, actual);
@@ -93,19 +93,19 @@ class CertificateRepositoryImplTest {
 
     @Test
     void showByCertificateName() {
-        Optional<GiftCertificate> giftCertificate = certificateRepository.showByName("ZIKO");
-        assertTrue(giftCertificate.isPresent());
+        GiftCertificate giftCertificate = certificateRepository.findGiftCertificateByName("ZIKO");
+        assertNotNull(giftCertificate);
     }
 
     @Test
     void showByCertificateNameNull() {
-        Optional<GiftCertificate> giftCertificate = certificateRepository.showByName("ZIKOjjjjjjj");
-        assertTrue(giftCertificate.isEmpty());
+        GiftCertificate giftCertificate = certificateRepository.findGiftCertificateByName("ZIKOjjjjjjj");
+        assertNull(giftCertificate);
     }
 
     @Test
     void showByTagNameZeroSize(){
-        List<GiftCertificate> giftCertificateList = certificateRepository.showByTagName(2, 0, "aaaaaaaaa");
+        List<GiftCertificate> giftCertificateList = certificateRepository.showByTagName("aaaaaaaaa", PageRequest.of(0, 2));
         int expected = 0;
         int actual = giftCertificateList.size();
         assertEquals(expected, actual);
@@ -113,7 +113,7 @@ class CertificateRepositoryImplTest {
 
     @Test
     void showByPartNameOrDescription() {
-        List<GiftCertificate> giftCertificateList = certificateRepository.showByPartNameOrDescription(2, 0, "IK");
+        List<GiftCertificate> giftCertificateList = certificateRepository.findGiftCertificatesByPartNameOrDescription("IK",  PageRequest.of(0, 2));
         String expected = "ZIKO";
         String actual = giftCertificateList.get(0).getName();
         assertEquals(expected, actual);
@@ -154,7 +154,8 @@ class CertificateRepositoryImplTest {
 
     @Test
     void sortByDateAsc() {
-        List<GiftCertificate> giftCertificates = certificateRepository.sortByDateAsc(2,0);
+        List<GiftCertificate> giftCertificates = certificateRepository.findAll(PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "lastUpdateDate")))
+                .getContent();
         long expected = 1L;
         long actual = giftCertificates.get(0).getId();
         assertEquals(expected, actual);
@@ -164,7 +165,8 @@ class CertificateRepositoryImplTest {
     @Test
     void sortByNameAsc() {
         long expected = 2L;
-        List<GiftCertificate> certificates = certificateRepository.sortByNameAsc(2, 0);
+        List<GiftCertificate> certificates = certificateRepository.findAll(PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "lastUpdateDate")))
+                .getContent();
         long actual = certificates.get(0).getId();
         assertEquals(expected, actual);
     }
@@ -173,7 +175,8 @@ class CertificateRepositoryImplTest {
     @Test
     void bothSorting(){
         long expected = 2L;
-        List<GiftCertificate> certificates = certificateRepository.bothSorting(2, 0);
+        List<GiftCertificate> certificates = certificateRepository.findAll(PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "name", "lastUpdateDate")))
+                .getContent();
         long actual = certificates.get(0).getId();
         assertEquals(expected, actual);
     }
@@ -181,7 +184,7 @@ class CertificateRepositoryImplTest {
     @Test
     void updateDuration(){
         certificateRepository.updateDuration(1, 65);
-        GiftCertificate giftCertificate = certificateRepository.showById(1);
+        GiftCertificate giftCertificate = certificateRepository.findGiftCertificateById(1);
         int actual = giftCertificate.getDuration();
         int expected = 65;
         assertEquals(expected, actual);
@@ -190,7 +193,7 @@ class CertificateRepositoryImplTest {
     @Test
     void updatePrice(){
         certificateRepository.updatePrice(1, BigDecimal.valueOf(65));
-        GiftCertificate giftCertificate = certificateRepository.showById(1);
+        GiftCertificate giftCertificate = certificateRepository.findGiftCertificateById(1);
         BigDecimal actual = giftCertificate.getPrice();
         BigDecimal expected = BigDecimal.valueOf(65.00);
         assertEquals(expected.intValue(), actual.intValue());

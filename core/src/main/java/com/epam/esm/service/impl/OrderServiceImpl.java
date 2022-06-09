@@ -1,5 +1,6 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.exception.CustomNotFoundException;
 import com.epam.esm.model.dto.OrderComponentDto;
 import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.OrderCertificate;
@@ -7,7 +8,9 @@ import com.epam.esm.model.dto.OrderDto;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.service.OrderService;
+import com.epam.esm.util.MessageLanguageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,14 +18,26 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Order service.
+ */
 @Service
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl implements OrderService{
 
     private final OrderRepository orderRepository;
+    private final MessageLanguageUtil messageLanguageUtil;
 
+    /**
+     * Instantiates a new Order service.
+     *
+     * @param orderRepository     the order repository
+     * @param messageLanguageUtil the message language util
+     */
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository){
+    public OrderServiceImpl(OrderRepository orderRepository,
+                            MessageLanguageUtil messageLanguageUtil){
         this.orderRepository = orderRepository;
+        this.messageLanguageUtil = messageLanguageUtil;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -30,30 +45,31 @@ public class OrderServiceImpl implements OrderService {
     public long createOrder(OrderDto orderDto) {
         Order order = new Order(orderDto.getOrderCost(), new User(orderDto.getUserId()));
         order.setOrderDate(LocalDateTime.now());
-        OrderCertificate orderCertificate = new OrderCertificate();
         List<OrderComponentDto> orderComponentDtos = orderDto.getOrderComponentDtos();
         List<OrderCertificate> orderCertificates = new ArrayList<>();
         for(OrderComponentDto orderComponentDto : orderComponentDtos){
+            OrderCertificate orderCertificate = new OrderCertificate();
             orderCertificate.setGiftCertificate(orderComponentDto.getGiftCertificate());
             orderCertificate.setAmount(orderComponentDto.getAmount());
             orderCertificate.setOrder(order);
             orderCertificates.add(orderCertificate);
         }
         order.setOrderCertificates(orderCertificates);
-        return orderRepository.createOrder(order);
+        return orderRepository.save(order).getOrderId();
     }
 
     @Override
     @Transactional
-    public List<OrderDto> findPaginatedUserOrders(long userId, int size, int offset) {
-        List<Order> orders = orderRepository.selectPaginatedUserOrders(userId, size, offset);
+    public List<OrderDto> findPaginatedUserOrders(long userId, int page, int size) {
+        List<Order> orders = orderRepository.findOrdersByUser_UserId(userId, PageRequest.of(page - 1, size));
         return buildOrderDtoList(orders);
     }
 
     @Override
     @Transactional
     public OrderDto findUserOrder(long orderId) {
-        Order order = orderRepository.findUserOrder(orderId);
+        Order order = orderRepository.findOrderByOrderId(orderId);
+        checkOrder(order, orderId);
         OrderDto orderDto = new OrderDto();
         orderDto.setOrderId(order.getOrderId());
         orderDto.setOrderCost(order.getOrderCost());
@@ -64,6 +80,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public int findTotalRecords(long userId) {
        return orderRepository.findCountAllRecords(userId);
     }
@@ -92,5 +109,11 @@ public class OrderServiceImpl implements OrderService {
             orderComponentDtos.add(orderComponentDto);
         }
         return orderComponentDtos;
+    }
+
+    private void checkOrder(Order order, long orderId){
+        if(order == null){
+            throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_found.order") + orderId);
+        }
     }
 }

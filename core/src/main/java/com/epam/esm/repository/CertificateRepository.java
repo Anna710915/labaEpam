@@ -1,31 +1,31 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.model.entity.GiftCertificate;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
+
+import static com.epam.esm.repository.query.CertificateQuery.UPDATE_CERTIFICATE_DURATION;
+import static com.epam.esm.repository.query.CertificateQuery.UPDATE_CERTIFICATE_PRICE;
+import static com.epam.esm.repository.query.CertificateQuery.SHOW_CERTIFICATE_BY_TAG_NAME;
+import static com.epam.esm.repository.query.CertificateQuery.FIND_CERTIFICATES_BY_PART_NAME_OR_DESCRIPTION;
+import static com.epam.esm.repository.query.CertificateQuery.FIND_COUNT_RECORDS;
+import static com.epam.esm.repository.query.CertificateQuery.FIND_COUNT_BY_TAG_NAME;
+import static com.epam.esm.repository.query.CertificateQuery.FIND_COUNT_CERTIFICATES_BY_PART_NAME_OR_DESCRIPTION;
 
 /**
  * The interface Certificate repository contains methods for certificates.
  *
  * @author Anna Merkul
  */
-public interface CertificateRepository {
-    /**
-     * Create a certificate.
-     *
-     * @param giftCertificate the gift certificate
-     * @return the long
-     */
-    long create(GiftCertificate giftCertificate);
-
-    /**
-     * Show list of certificates.
-     *
-     * @return the list
-     */
-    List<GiftCertificate> show(int limit, int offset);
+@Repository
+public interface CertificateRepository extends JpaRepository<GiftCertificate, Long>, QueryCertificateRepository {
 
     /**
      * Show by id gift certificate.
@@ -33,7 +33,7 @@ public interface CertificateRepository {
      * @param id the id
      * @return the gift certificate
      */
-    GiftCertificate showById(long id);
+    GiftCertificate findGiftCertificateById(long id);
 
     /**
      * Show by name gift certificate.
@@ -41,14 +41,7 @@ public interface CertificateRepository {
      * @param name the name
      * @return the gift certificate
      */
-    Optional<GiftCertificate> showByName(String name);
-
-    /**
-     * Update a certificate.
-     *
-     * @param giftCertificate the gift certificate
-     */
-    void update(GiftCertificate giftCertificate);
+    GiftCertificate findGiftCertificateByName(String name);
 
     /**
      * Update duration boolean.
@@ -56,7 +49,9 @@ public interface CertificateRepository {
      * @param certificateId the certificate id
      * @param duration      the duration
      */
-    void updateDuration(long certificateId, int duration);
+    @Modifying
+    @Query(value = UPDATE_CERTIFICATE_DURATION, nativeQuery = true)
+    void updateDuration(@Param("certificateId") long certificateId, @Param("duration") int duration);
 
     /**
      * Update price boolean.
@@ -64,61 +59,62 @@ public interface CertificateRepository {
      * @param certificateId the certificate id
      * @param price         the price
      */
-    void updatePrice(long certificateId, BigDecimal price);
+    @Modifying
+    @Query(value = UPDATE_CERTIFICATE_PRICE, nativeQuery = true)
+    void updatePrice(@Param("certificateId") long certificateId, @Param("price") BigDecimal price);
 
     /**
-     * Delete a certificate.
+     * Delete gift certificate by id int.
      *
      * @param id the id
-     * @return the boolean
+     * @return the int
      */
-    boolean delete(long id);
+    int deleteGiftCertificateById(long id);
 
     /**
-     * Show by tag name the list of certificates.
+     * Show by tag name list.
      *
-     * @param name the name
+     * @param name     the name
+     * @param pageable the pageable
      * @return the list
      */
-    List<GiftCertificate> showByTagName(int limit, int offset, String name);
+    @Query(value = SHOW_CERTIFICATE_BY_TAG_NAME)
+    List<GiftCertificate> showByTagName(@Param("name") String name, Pageable pageable);
 
     /**
-     * Show by part name or description the list of certificates.
+     * Find gift certificates by part name or description list.
      *
      * @param partName the part name
+     * @param pageable the pageable
      * @return the list
      */
-    List<GiftCertificate> showByPartNameOrDescription(int limit, int offset, String partName);
+    @Query(value = FIND_CERTIFICATES_BY_PART_NAME_OR_DESCRIPTION)
+    List<GiftCertificate> findGiftCertificatesByPartNameOrDescription(@Param("partName") String partName, Pageable pageable);
 
     /**
-     * Sort by date asc the list of certificates.
+     * Find count records int.
      *
-     * @return the list
+     * @return the int
      */
-    List<GiftCertificate> sortByDateAsc(int limit, int offset);
-
-    /**
-     * Sort by name asc the list of certificates.
-     *
-     * @return the list
-     */
-    List<GiftCertificate> sortByNameAsc(int limit, int offset);
-
-    /**
-     * Both sorting for the list of certificates.
-     *
-     * @return the list
-     */
-    List<GiftCertificate> bothSorting(int limit, int offset);
-
-
-    List<GiftCertificate> findByTags(int limit, int offset, List<String> tagsName);
-
+    @Query(value = FIND_COUNT_RECORDS, nativeQuery = true)
     int findCountRecords();
 
-    int findCountByTagName(String tagName);
+    /**
+     * Find count by tag name int.
+     *
+     * @param tagName the tag name
+     * @return the int
+     */
+    @Query(value = FIND_COUNT_BY_TAG_NAME, nativeQuery = true)
+    int findCountByTagName(@Param("tagName") String tagName);
 
-    int findCountByPartNameOrDescription(String part);
 
-    int findCountByTagsQuery(List<String> tagsName);
+    /**
+     * Count gift certificate by part name or description int.
+     *
+     * @param partName the part name
+     * @return the int
+     */
+    @Query(value = FIND_COUNT_CERTIFICATES_BY_PART_NAME_OR_DESCRIPTION)
+    int countGiftCertificateByPartNameOrDescription(@Param("partName") String partName);
 }

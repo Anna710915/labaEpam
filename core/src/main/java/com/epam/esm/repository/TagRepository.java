@@ -1,39 +1,38 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.model.entity.Tag;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
+
+import static com.epam.esm.repository.query.TagQuery.COUNT_ALL_TAGS;
+import static com.epam.esm.repository.query.TagQuery.FIND_WIDELY_USER_TAG_WITH_HIGHEST_ORDERS_COST;
 
 /**
  * The interface Tag repository contains methods for tags.
+ *
  * @author Anna Merkul
  */
-public interface TagRepository {
-    /**
-     * Create tags.
-     *
-     * @param tag the tag
-     * @return the long
-     */
-    long create(Tag tag);
+@Repository
+public interface TagRepository extends JpaRepository<Tag, Long> {
 
     /**
-     * Show the set of tags.
+     * Find tag by name tag.
      *
-     * @return the set
+     * @param name the name
+     * @return the tag
      */
-    List<Tag> show(int limit, int offset);
+    Tag findTagByName(String name);
 
     /**
-     * Show by id tag.
+     * Find tag by id tag.
      *
      * @param id the id
      * @return the tag
      */
-    Tag showById(long id);
-
-    Optional<Tag> showByName(String name);
+    Tag findTagById(long id);
 
     /**
      * Delete a tag.
@@ -41,9 +40,21 @@ public interface TagRepository {
      * @param id the id
      * @return the boolean
      */
-    boolean delete(long id);
+    int deleteTagById(long id);
 
+    /**
+     * Find widely user tag with highest orders cost list.
+     *
+     * @return the list
+     */
+    @Query(value = FIND_WIDELY_USER_TAG_WITH_HIGHEST_ORDERS_COST, nativeQuery = true)
     List<Tag> findWidelyUserTagWithHighestOrdersCost();
 
+    /**
+     * Count all tags int.
+     *
+     * @return the int
+     */
+    @Query(value = COUNT_ALL_TAGS, nativeQuery = true)
     int countAllTags();
 }

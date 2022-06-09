@@ -2,9 +2,19 @@ package com.epam.esm.model.dto;
 
 import org.springframework.hateoas.RepresentationModel;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+/**
+ * The type Tag dto.
+ * @author Anna Merkul
+ */
 public class TagDto extends RepresentationModel<TagDto> {
 
     private long id;
+
+    @Size(max = 100, message = "{size_tag}")
     private String name;
 
     /**
@@ -90,11 +100,9 @@ public class TagDto extends RepresentationModel<TagDto> {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("TagDto{");
-        sb.append("id=").append(id);
-        sb.append(", name='").append(name).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "TagDto{" + "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 
 

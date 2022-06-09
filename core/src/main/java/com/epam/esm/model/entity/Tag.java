@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * The type Tag. The entity class.
+ *
  * @author Anna Merkul
  */
 @EntityListeners(AuditListener.class)
@@ -88,6 +89,7 @@ public class Tag {
         this.name = name;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -110,11 +112,9 @@ public class Tag {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Tag{");
-        sb.append("id=").append(id);
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", giftCertificates=").append(giftCertificates);
-        sb.append('}');
-        return sb.toString();
+        return "Tag{" + "id=" + id +
+                ", name='" + name + '\'' +
+                ", giftCertificates=" + giftCertificates +
+                '}';
     }
 }

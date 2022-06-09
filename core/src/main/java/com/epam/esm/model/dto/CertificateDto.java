@@ -4,19 +4,37 @@ import com.epam.esm.model.entity.Tag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.hateoas.RepresentationModel;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * The type Certificate dto class is used for transferring data between layers.
+ *
  * @author Anna Merkul
  */
 public class CertificateDto extends RepresentationModel<CertificateDto> {
+
     private long id;
+
+    @Pattern(regexp = "[\\w\\p{Blank}А-Яа-я]+", message = "{invalid_certificate_name}")
+    @Size(min = 2, max = 100, message = "{size_certificate_name}")
     private String name;
+
+    @Pattern(regexp = "[^<>]+", message = "{invalid_description}")
+    @Size(max = 120, message = "{size_certificate_description}")
     private String description;
+
+    @Min(value = 5, message = "{min_certificate_price}")
+    @Max(value = 100000, message = "{max_certificate_price}")
     private BigDecimal price;
+
+    @Min(value = 1, message = "{min_certificate_duration}")
+    @Max(value = 365, message = "{max_certificate_duration}")
     private int duration;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -31,6 +49,11 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
      */
     public CertificateDto(){}
 
+    /**
+     * Instantiates a new Certificate dto.
+     *
+     * @param tags the tags
+     */
     public CertificateDto(List<Tag> tags){
         this.tags = tags;
     }
@@ -38,10 +61,10 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
     /**
      * Instantiates a new Certificate dto.
      *
-     * @param id     the id
-     * @param name   the name
-     * @param price  the price
-     * @param tags the tag list
+     * @param id    the id
+     * @param name  the name
+     * @param price the price
+     * @param tags  the tag list
      */
     public CertificateDto(long id, String name, BigDecimal price,
                           List<Tag> tags) {
@@ -61,7 +84,7 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
      * @param duration       the duration
      * @param createDate     the create date
      * @param lastUpdateDate the last update date
-     * @param tags         the tag list
+     * @param tags           the tag list
      */
     public CertificateDto(long id, String name, String description,
                           BigDecimal price, int duration, LocalDateTime createDate,
@@ -85,7 +108,7 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
      * @param duration       the duration
      * @param createDate     the create date
      * @param lastUpdateDate the last update date
-     * @param tags         the tag list
+     * @param tags           the tag list
      */
     public CertificateDto(String name, String description,
                           BigDecimal price, int duration, LocalDateTime createDate,
@@ -106,7 +129,7 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
      * @param description the description
      * @param price       the price
      * @param duration    the duration
-     * @param tags      the tag list
+     * @param tags        the tag list
      */
     public CertificateDto(String name, String description, BigDecimal price, int duration,
                           List<Tag> tags) {
@@ -125,7 +148,7 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
      * @param description the description
      * @param price       the price
      * @param duration    the duration
-     * @param tags      the tag list
+     * @param tags        the tag list
      */
     public CertificateDto(long id, String name, String description, BigDecimal price,
                           int duration, List<Tag> tags) {
@@ -314,16 +337,14 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CertificateDto{");
-        sb.append("id=").append(id);
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", price=").append(price);
-        sb.append(", duration=").append(duration);
-        sb.append(", createDate=").append(createDate);
-        sb.append(", lastUpdateDate=").append(lastUpdateDate);
-        sb.append(", tagSet=").append(tags);
-        sb.append('}');
-        return sb.toString();
+        return "CertificateDto{" + "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", duration=" + duration +
+                ", createDate=" + createDate +
+                ", lastUpdateDate=" + lastUpdateDate +
+                ", tagSet=" + tags +
+                '}';
     }
 }
