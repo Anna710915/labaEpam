@@ -25,10 +25,10 @@ public interface CertificateService {
      * Show all list.
      *
      * @param page   the page
-     * @param offset the offset
+     * @param size   the size
      * @return the list
      */
-    List<CertificateDto> showAll(int page, int offset);
+    List<CertificateDto> showAll(int page, int size);
 
     /**
      * Show certificate with tags certificate dto.

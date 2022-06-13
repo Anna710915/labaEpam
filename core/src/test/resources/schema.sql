@@ -2,7 +2,7 @@ CREATE SCHEMA certificates;
 
 create table tag(
      tag_id bigint primary key auto_increment,
-     name varchar(100)
+     name VARCHAR(100) UNIQUE
 );
 
 create table gift_certificate(
@@ -22,7 +22,10 @@ create table tags_gift_certificates(
 
 CREATE TABLE users(
     user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50));
+    username VARCHAR(50),
+    role VARCHAR(50),
+    user_password VARCHAR(50)
+);
 
 CREATE TABLE orders(
     order_id BIGINT AUTO_INCREMENT PRIMARY KEY,

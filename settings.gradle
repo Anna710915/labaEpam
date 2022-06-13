@@ -5,8 +5,8 @@ pluginManagement {
 		gradlePluginPortal()
 	}
 }
+
 rootProject.name = 'esm'
 include 'controller'
 include 'logging'
-include 'api'
 include 'core'
