@@ -4,6 +4,7 @@ plugins {
     id 'java'
     id 'org.sonarqube' version '3.4.0.2513'
     id 'jacoco'
+    id 'war'
 }
 
 group = 'com.epam'
@@ -57,4 +58,8 @@ jacocoTestReport {
 jacoco {
     toolVersion = "0.8.7"
     reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+
+war {
+    enabled=true
 }

@@ -4,6 +4,7 @@ plugins {
     id 'java'
     id 'org.sonarqube' version '3.4.0.2513'
     id 'jacoco'
+    id 'war'
 }
 
 group = 'com.epam'
@@ -37,6 +38,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.7'
 
     implementation 'org.springframework.boot:spring-boot-starter-validation:2.6.7'
+}
+war {
+    enabled=true
 }
 
 test {
