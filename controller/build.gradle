@@ -3,6 +3,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'org.sonarqube' version '3.4.0.2513'
+    id 'jacoco'
+    id 'war'
 }
 
 group = 'com.epam'
@@ -21,6 +23,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-hateoas:2.6.6'
     implementation ('org.springframework.boot:spring-boot-starter-web:2.6.6'){
         exclude group: 'org.springframework.boot', module:'spring-boot-starter-logging'
+        exclude group: 'org.springframework.boot', module:'spring-boot-starter-tomcat'
     }
 
     runtimeOnly 'mysql:mysql-connector-java:8.0.28'
@@ -37,7 +40,19 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-validation:2.6.7'
 }
+war {
+    enabled=true
+}
 
 test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
     useJUnitPlatform()
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
 }

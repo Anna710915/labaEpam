@@ -13,8 +13,8 @@ VALUES (1, 1),
        (2, 1),
        (3, 2);
 
-INSERT INTO users(username)
-VALUES('Anna'),('Daniil');
+INSERT INTO users(username, role, user_password)
+VALUES('Anna', 'ADMIN', 'Anna'),('Daniil', 'ADMIN', 'Daniil');
 
 INSERT INTO orders(order_cost, order_date, user_id)
 VALUES (150, '2022-03-12 15:22:24', 1),

@@ -10,8 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -24,9 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class TagServiceImplTest {
 
     private TagService tagService;
-    @Autowired
-    private MessageLanguageUtil messageLanguageUtil;
-    private TagRepository mock = Mockito.mock(TagRepository.class);
+    private final MessageLanguageUtil messageLanguageUtil = Mockito.mock(MessageLanguageUtil.class);
+    private final TagRepository mock = Mockito.mock(TagRepository.class);
 
 
     @BeforeEach
@@ -36,25 +35,25 @@ class TagServiceImplTest {
 
     @Test
     void showAll() {
-        Mockito.when(mock.findAll(PageRequest.of(0, 2))).thenReturn(List.of(new Tag(1L,"name"), new Tag(2L,"sea")));
-        tagService.showAll(2,1);
+        Mockito.when(mock.findAll(PageRequest.of(0, 2))).thenReturn(new PageImpl<>(List.of(new Tag(1L, "name"), new Tag(2L, "sea"))));
+        tagService.showAll(1,2);
         Mockito.verify(mock).findAll(PageRequest.of(0, 2));
     }
 
     @Test
     void delete() {
-        Mockito.when(mock.delete(Mockito.anyLong())).thenReturn(true);
+        Mockito.when(mock.deleteTagById(Mockito.anyLong())).thenReturn(1);
         boolean actual = tagService.delete(1L);
         assertTrue(actual);
-        Mockito.verify(mock).delete(Mockito.anyLong());
+        Mockito.verify(mock).deleteTagById(Mockito.anyLong());
     }
 
     @Test
     void showById() {
-        Mockito.when(mock.showById(Mockito.anyLong())).thenReturn(new Tag(1L, "name"));
+        Mockito.when(mock.findTagById(Mockito.anyLong())).thenReturn(new Tag(1L, "name"));
         TagDto actual = tagService.showById(1L);
         assertNotNull(actual);
-        Mockito.verify(mock).showById(Mockito.anyLong());
+        Mockito.verify(mock).findTagById(Mockito.anyLong());
     }
 
     @AfterEach

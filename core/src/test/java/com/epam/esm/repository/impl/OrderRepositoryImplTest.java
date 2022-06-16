@@ -50,12 +50,12 @@ public class OrderRepositoryImplTest {
         assertNotNull(actual);
     }
 
-    @Test
-    void findTotalUserOrdersCount(){
-        int actual = orderRepository.findCountAllRecords(1L);
-        int expected = 1;
-        assertEquals(expected, actual);
-    }
+//    @Test
+//    void findTotalUserOrdersCount(){
+//        int actual = orderRepository.findCountAllRecords(1L);
+//        int expected = 1;
+//        assertEquals(expected, actual);
+//    }
 
     @Test
     void findUserOrderList(){

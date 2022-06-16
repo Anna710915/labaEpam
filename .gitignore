@@ -10,7 +10,7 @@ node_modules
 *.ear
 *.nar
 hs_err_pid*
-
+*/*.hprof
 .gradle
 /build/
 !gradle/wrapper/gradle-wrapper.jar

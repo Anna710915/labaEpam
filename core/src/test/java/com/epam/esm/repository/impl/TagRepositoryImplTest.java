@@ -48,12 +48,12 @@ class TagRepositoryImplTest {
         assertNotNull(tag);
     }
 
-    @Test
-    void countAllTags(){
-        int actual = tagRepository.countAllTags();
-        int expected = 4;
-        assertEquals(expected, actual);
-    }
+//    @Test
+//    void countAllTags(){
+//        int actual = tagRepository.countAllTags();
+//        int expected = 4;
+//        assertEquals(expected, actual);
+//    }
 
     @Test
     void showById() {
@@ -64,13 +64,13 @@ class TagRepositoryImplTest {
     }
 
 
-    @Test
-    void delete() {
-        tagRepository.deleteTagById(3);
-        int expected = 3;
-        int actual = tagRepository.findAll(PageRequest.of(0, 3)).getContent().size();
-        assertEquals(expected, actual);
-    }
+//    @Test
+//    void delete() {
+//        tagRepository.deleteTagById(3);
+//        int expected = 3;
+//        int actual = tagRepository.findAll(PageRequest.of(0, 3)).getContent().size();
+//        assertEquals(expected, actual);
+//    }
 
     @Test
     void findWidelyUserTagWithHighestOrdersCostTest(){
