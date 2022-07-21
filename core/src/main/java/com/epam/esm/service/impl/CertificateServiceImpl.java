@@ -1,9 +1,11 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.exception.CustomNotFoundException;
+import com.epam.esm.model.dto.SortDto;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.dto.CertificateDto;
 import com.epam.esm.model.entity.Tag;
+import com.epam.esm.pagination.Pagination;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.CertificateService;
@@ -53,8 +55,14 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public int findCountCertificateRecords() {
-        return certificateRepository.findCountRecords();
+    @Transactional
+    public int findCountCertificateRecords(String part, String tags, SortDto sort) {
+        List<String> tagNameList = new ArrayList<>();
+        if(tags != null){
+            String[] tagName = tags.split(REGEX_COMMA);
+            tagNameList = filterExistingTags(tagName);
+        }
+        return certificateRepository.findCountRecords(part, tagNameList, sort);
     }
 
     @Override
@@ -66,9 +74,24 @@ public class CertificateServiceImpl implements CertificateService {
         GiftCertificate giftCertificate = new GiftCertificate(certificateDto.getName(),
                 certificateDto.getDescription(), certificateDto.getPrice(),
                 certificateDto.getDuration(), localDateTime, localDateTime);
-        List<Tag> tags = tagRepository.saveAll(certificateDto.getTags());
+        List<Tag> newTags = certificateDto.getTags();
+        filterTags(newTags);
+        List<Tag> tags = tagRepository.saveAll(newTags);
         giftCertificate.setTags(tags);
         return certificateRepository.save(giftCertificate).getId();
+    }
+
+    @Override
+    @Transactional
+    public List<CertificateDto> findAll(String part, String tags, SortDto sort, int page, int size) {
+        int offset = Pagination.offset(page, size);
+        List<String> tagNameList = new ArrayList<>();
+        if(tags != null){
+            String[] tagName = tags.split(REGEX_COMMA);
+            tagNameList = filterExistingTags(tagName);
+        }
+        List<GiftCertificate> giftCertificateList = certificateRepository.findAllCertificates(size, offset, part, tagNameList, sort);
+        return certificateDtoListBuilder(giftCertificateList);
     }
 
     @Override
@@ -96,7 +119,9 @@ public class CertificateServiceImpl implements CertificateService {
         if(updateGiftCertificateData(giftCertificate, certificateDto)) {
             giftCertificate.setLastUpdateDate(LocalDateTime.now());
         }
-        List<Tag> tags = tagRepository.saveAll(certificateDto.getTags());
+        List<Tag> newTags = certificateDto.getTags();
+        filterTags(newTags);
+        List<Tag> tags = tagRepository.saveAll(newTags);
         giftCertificate.setTags(tags);
         certificateRepository.save(giftCertificate);
     }
@@ -129,7 +154,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional
-    public List<CertificateDto> sortByName(int page, int size) {
+    public List<CertificateDto> sortByNameAsc(int page, int size) {
         List<GiftCertificate> giftCertificateList = certificateRepository
                 .findAll(PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "name"))).getContent();
         return certificateDtoListBuilder(giftCertificateList);
@@ -137,7 +162,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional
-    public List<CertificateDto> sortByDate(int page, int size) {
+    public List<CertificateDto> sortByDateAsc(int page, int size) {
         List<GiftCertificate> giftCertificateList = certificateRepository
                 .findAll(PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "lastUpdateDate"))).getContent();
         return certificateDtoListBuilder(giftCertificateList);
@@ -145,7 +170,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional
-    public List<CertificateDto> bothSort(int page, int size) {
+    public List<CertificateDto> bothSortAsc(int page, int size) {
         List<GiftCertificate> giftCertificateList = certificateRepository
                 .findAll(PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "name", "lastUpdateDate"))).getContent();
         return certificateDtoListBuilder(giftCertificateList);
@@ -249,6 +274,15 @@ public class CertificateServiceImpl implements CertificateService {
     private void checkCertificate(GiftCertificate giftCertificate, long id){
         if(giftCertificate == null){
             throw new CustomNotFoundException(messageLanguageUtil.getMessage("not_found.certificate") + id);
+        }
+    }
+
+    private void filterTags(List<Tag> tags){
+        for(Tag tag : tags){
+            Tag foundedTag = tagRepository.findTagByName(tag.getName());
+            if(foundedTag != null){
+                tag.setId(foundedTag.getId());
+            }
         }
     }
 }

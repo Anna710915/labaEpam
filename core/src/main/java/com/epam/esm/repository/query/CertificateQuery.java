@@ -25,6 +25,9 @@ public final class CertificateQuery {
     public static final String FIND_COUNT_CERTIFICATES_BY_PART_NAME_OR_DESCRIPTION = """
             SELECT COUNT(g) FROM GiftCertificate g WHERE g.name  LIKE %:partName% OR g.description LIKE %:partName%""";
 
+    public static final String FIND_ALL_CERTIFICATES = """
+            SELECT gift_certificate_id, name, description, price, duration, create_date, last_update_date FROM 
+            """;
     public static final String SQL_FIND_BY_TAGS_START = """
             SELECT gift_certificate_id, name, description, price, duration, create_date, last_update_date  FROM (
             SELECT gift_certificate.*, tag.name AS tag_name FROM gift_certificate

@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.model.dto.CertificateDto;
+import com.epam.esm.model.dto.SortDto;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,6 +20,9 @@ public interface CertificateService {
      * @return the long
      */
     long create(CertificateDto certificateDto);
+
+    List<CertificateDto> findAll(String part, String tags, SortDto sort,
+                                 int page, int size);
 
 
     /**
@@ -75,7 +79,7 @@ public interface CertificateService {
      * @param size the size
      * @return the list
      */
-    List<CertificateDto> sortByName(int page, int size);
+    List<CertificateDto> sortByNameAsc(int page, int size);
 
     /**
      * Sort by date list.
@@ -84,7 +88,7 @@ public interface CertificateService {
      * @param size the size
      * @return the list
      */
-    List<CertificateDto> sortByDate(int page, int size);
+    List<CertificateDto> sortByDateAsc(int page, int size);
 
     /**
      * Both sort list.
@@ -93,7 +97,8 @@ public interface CertificateService {
      * @param size the size
      * @return the list
      */
-    List<CertificateDto> bothSort(int page, int size);
+    List<CertificateDto> bothSortAsc(int page, int size);
+
 
     /**
      * Delete certificate.
@@ -134,7 +139,7 @@ public interface CertificateService {
      *
      * @return the int
      */
-    int findCountCertificateRecords();
+    int findCountCertificateRecords(String part, String tags, SortDto sort);
 
     /**
      * Find count certificates by tag name int.

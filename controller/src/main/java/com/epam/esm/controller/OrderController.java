@@ -28,12 +28,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  */
 @RestController
 @RequestMapping("/certificates")
+@CrossOrigin(maxAge = 3600)
 public class OrderController {
 
     private static final String GET_ORDER = "get_order";
     private static final String GET_ORDERS = "get_orders";
     private static final int START_PAGE = 1;
-    private static final int START_SIZE = 2;
+    private static final int START_SIZE = 10;
 
     private final OrderService orderService;
     private final MessageLanguageUtil messageLanguageUtil;
@@ -67,8 +68,8 @@ public class OrderController {
             throw new CustomExternalException(messageLanguageUtil.getMessage("internal_error.create_order") + orderDto);
         }
         orderDto.add(linkTo(methodOn(CertificateController.class)
-                .showAll(START_PAGE, START_SIZE)).withRel("get_certificates")
-                .withType(HttpMethod.GET.name()));
+                .findAll(null, null, null, null, START_PAGE, START_SIZE)).withRel("get_certificates")
+                        .expand().withType(HttpMethod.GET.name()));
         return new ResponseEntity<>(orderDto, httpStatus);
     }
 
