@@ -27,6 +27,7 @@ import java.util.List;
  * The type User controller.
  */
 @RestController
+@CrossOrigin(maxAge = 3600)
 @RequestMapping(value = "/certificates")
 public class UserController {
 
@@ -66,6 +67,7 @@ public class UserController {
     @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
     public ResponseEntity<AuthenticationResponseDto> login(@RequestBody AuthenticationRequestDto requestDto){
         try{
+
             String username = requestDto.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
             UserDto userDto = userService.findUserByName(username);
@@ -73,7 +75,7 @@ public class UserController {
                 throw new UsernameNotFoundException(messageLanguageUtil.getMessage("not_found.user") + username);
             }
             String token = jwtUtil.createToken(username, List.of(userDto.getRole()));
-            return new ResponseEntity<>(new AuthenticationResponseDto(username, token), HttpStatus.OK);
+            return new ResponseEntity<>(new AuthenticationResponseDto(username, token, userDto.getRole()), HttpStatus.OK);
         } catch (AuthenticationException e){
             throw new BadCredentialsException(messageLanguageUtil.getMessage("bad_request.invalid_username_or_password"), e);
         }

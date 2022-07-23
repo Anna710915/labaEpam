@@ -91,13 +91,7 @@ public interface CertificateRepository extends JpaRepository<GiftCertificate, Lo
     @Query(value = FIND_CERTIFICATES_BY_PART_NAME_OR_DESCRIPTION)
     List<GiftCertificate> findGiftCertificatesByPartNameOrDescription(@Param("partName") String partName, Pageable pageable);
 
-    /**
-     * Find count records int.
-     *
-     * @return the int
-     */
-    @Query(value = FIND_COUNT_RECORDS, nativeQuery = true)
-    int findCountRecords();
+
 
     /**
      * Find count by tag name int.

@@ -22,6 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/certificates")
+@CrossOrigin(maxAge = 3600)
 public class TagController {
 
     private final TagService tagService;

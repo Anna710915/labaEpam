@@ -19,9 +19,7 @@ repositories {
 
 dependencies {
     implementation project(":core")
-    implementation ('org.springframework.boot:spring-boot-starter-web:2.6.6') {
-        exclude group: 'org.springframework.boot', module:'spring-boot-starter-tomcat'
-    }
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.6'
     runtimeOnly 'mysql:mysql-connector-java:8.0.28'
     testImplementation ('org.springframework.boot:spring-boot-starter-test:2.6.6'){
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

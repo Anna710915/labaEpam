@@ -11,7 +11,7 @@ public enum UserPermission {
     /**
      * The Guest.
      */
-    GUEST(Map.of(HttpMethod.GET, new String[]{"/certificates/tag/**", "/certificates/certificate/**"},
+    GUEST(Map.of(HttpMethod.GET, new String[]{"/certificates/tag/**", "/certificates/certificate/**", "/certificates/all"},
             HttpMethod.POST, new String[]{"/certificates/login", "/certificates/signup"})),
 
     /**

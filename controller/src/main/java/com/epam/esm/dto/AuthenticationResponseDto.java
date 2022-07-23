@@ -1,5 +1,7 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.model.entity.UserRole;
+
 /**
  * The type Authentication response dto.
  */
@@ -7,6 +9,7 @@ public class AuthenticationResponseDto {
 
     private String username;
     private String token;
+    private UserRole role;
 
     /**
      * Instantiates a new Authentication response dto.
@@ -19,9 +22,10 @@ public class AuthenticationResponseDto {
      * @param username the username
      * @param token    the token
      */
-    public AuthenticationResponseDto(String username, String token) {
+    public AuthenticationResponseDto(String username, String token, UserRole role) {
         this.username = username;
         this.token = token;
+        this.role = role;
     }
 
     /**
@@ -60,6 +64,14 @@ public class AuthenticationResponseDto {
         this.token = token;
     }
 
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,20 +80,26 @@ public class AuthenticationResponseDto {
         AuthenticationResponseDto that = (AuthenticationResponseDto) o;
 
         if (username != null ? !username.equals(that.username) : that.username != null) return false;
-        return token != null ? token.equals(that.token) : that.token == null;
+        if (token != null ? !token.equals(that.token) : that.token != null) return false;
+        return role == that.role;
     }
 
     @Override
     public int hashCode() {
         int result = username != null ? username.hashCode() : 0;
         result = 31 * result + (token != null ? token.hashCode() : 0);
+        result = 31 * result + (role != null ? role.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "AuthenticationResponseDto{" + "username='" + username + '\'' +
-                ", token='" + token + '\'' +
-                '}';
+        final StringBuilder sb = new StringBuilder("AuthenticationResponseDto{");
+        sb.append("username='").append(username).append('\'');
+        sb.append(", token='").append(token).append('\'');
+        sb.append(", role=").append(role);
+        sb.append('}');
+        return sb.toString();
     }
 }
+

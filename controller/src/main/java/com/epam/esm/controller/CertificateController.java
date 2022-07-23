@@ -5,6 +5,7 @@ import com.epam.esm.dto.CertificatePriceDto;
 import com.epam.esm.model.dto.CertificateDto;
 import com.epam.esm.exception.CustomExternalException;
 import com.epam.esm.exception.CustomNotFoundException;
+import com.epam.esm.model.dto.SortDto;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.pagination.Pagination;
 import com.epam.esm.service.CertificateService;
@@ -35,6 +36,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * @author Anna Merkul
  */
 @RestController
+@CrossOrigin(maxAge = 3600)
 @RequestMapping("/certificates")
 public class CertificateController {
 
@@ -42,10 +44,8 @@ public class CertificateController {
     private static final String DELETE_CERTIFICATE = "delete_certificate";
     private static final String GET_CERTIFICATES = "get_certificates";
     private static final String START_PATH = "/certificates/";
-    private static final String SORT_NAME = "name";
-    private static final String SORT_DATE = "date";
     private static final int START_PAGE = 1;
-    private static final int START_SIZE = 2;
+    private static final int START_SIZE = 10;
     private final CertificateService certificateService;
     private final MessageLanguageUtil messageLanguageUtil;
 
@@ -78,22 +78,22 @@ public class CertificateController {
         return new ResponseEntity<>(certificateDto, headers, status);
     }
 
-    /**
-     * Show all list of certificates dto.
-     *
-     * @param page the page
-     * @param size the size
-     * @return the list
-     */
-    @GetMapping(value = "/certificate", produces = "application/json")
-    public CollectionModel<CertificateDto> showAll(@RequestParam(value = "page") int page,
-                                                        @RequestParam(value = "size") int size){
-        List<CertificateDto> certificateDtos = certificateService.showAll(page, size);
+    @GetMapping(value = "/all", produces = "application/json")
+    public CollectionModel<CertificateDto> findAll(@RequestParam(value = "part", required = false) String part,
+                                                   @RequestParam(value = "tags", required = false) String tags,
+                                                   @RequestParam(value = "name", required = false) String name,
+                                                   @RequestParam(value = "date", required = false) String date,
+                                                   @RequestParam(value = "page") int page,
+                                                   @RequestParam(value = "size") int size){
+        SortDto sort = new SortDto(date, name);
+        List<CertificateDto> certificateDtos = certificateService.findAll(part, tags, sort, page, size);
         addLinksForCertificatesList(certificateDtos);
-        int totalRecords = certificateService.findCountCertificateRecords();
-        Link prev = findPrevShowAllLink(page, size);
-        Link next = findNextShowAllLink(page, size, totalRecords);
-        return CollectionModel.of(certificateDtos, prev, next);
+        int totalRecords = certificateService.findCountCertificateRecords(part, tags, sort);
+        Link prev = findPrevShowAllLink(page, size, part, tags, name, date);
+        Link next = findNextShowAllLink(page, size, totalRecords, part, tags, name, date);
+        Link first = findFirstPage(page, size, part, tags, name, date);
+        Link last = findLastPage(page, size, totalRecords, part, tags, name, date);
+        return CollectionModel.of(certificateDtos,  first, prev, next, last);
     }
 
 
@@ -178,42 +178,6 @@ public class CertificateController {
         return CollectionModel.of(certificateDtos, prevLink, nextLink);
     }
 
-    /**
-     * Sort list certificate dto.
-     *
-     * @param name the name
-     * @param date the date
-     * @param page the page
-     * @param size the size
-     * @return the list
-     */
-    @GetMapping(value = "/certificate/sort")
-    public CollectionModel<CertificateDto> sortAll(@RequestParam(value = "param_1", required = false) String name,
-                                     @RequestParam(value = "param_2", required = false) String date,
-                                     @RequestParam(value = "page") int page,
-                                     @RequestParam(value = "size") int size){
-        int totalRecords = certificateService.findCountCertificateRecords();
-        List<CertificateDto> certificateDtos;
-        if(SORT_NAME.equals(name) && SORT_DATE.equals(date)){
-            certificateDtos = certificateService.bothSort(page, size);
-        }else if(SORT_NAME.equals(name)){
-            certificateDtos = certificateService.sortByName(page, size);
-        }else if(SORT_DATE.equals(date)){
-            certificateDtos = certificateService.sortByDate(page, size);
-        }else{
-            certificateDtos = certificateService.showAll(page, size);
-        }
-        int pages = Pagination.findPages(totalRecords, size);
-        int lastPage = Pagination.findLastPage(pages, size, totalRecords);
-        addLinksForCertificatesList(certificateDtos);
-        Link prevLink = linkTo(methodOn(CertificateController.class)
-                .sortAll(name, date, Pagination.findPrevPage(page), size))
-                .withRel("Prev").withType(HttpMethod.GET.name());
-        Link nextLink = linkTo(methodOn(CertificateController.class)
-                .sortAll(name, date, Pagination.findNextPage(page, lastPage), size))
-                .withRel("next").withType(HttpMethod.GET.name());
-        return CollectionModel.of(certificateDtos, prevLink, nextLink);
-    }
 
     /**
      * Update certificate certificate dto.
@@ -311,7 +275,8 @@ public class CertificateController {
 
     private void addAllCertificatesLinks(CertificateDto certificateDto){
         certificateDto.add(linkTo(methodOn(CertificateController.class)
-                .showAll(START_PAGE, START_SIZE)).withRel(GET_CERTIFICATES).withType(HttpMethod.GET.name()));
+                .findAll(null, null, null, null, START_PAGE, START_SIZE))
+                .withRel(GET_CERTIFICATES).expand().withType(HttpMethod.GET.name()));
     }
 
     private void addCertificateWithTagsLink(CertificateDto certificateDto){
@@ -326,17 +291,34 @@ public class CertificateController {
                 .withType(HttpMethod.DELETE.name()));
     }
 
-    private Link findPrevShowAllLink(int page, int size){
+    private Link findPrevShowAllLink(int page, int size, String part, String tags, String name, String date){
         return linkTo(methodOn(CertificateController.class)
-                .showAll(Pagination.findPrevPage(page), size))
-                .withRel("prev").withType(HttpMethod.GET.name());
+                .findAll(part, tags, name, date, Pagination.findPrevPage(page), size))
+                .withRel("prev").withType(HttpMethod.GET.name()).expand().withName(String.valueOf(page > 1 ? page - 1 : 1));
+
     }
 
-    private Link findNextShowAllLink(int page, int size, int totalRecords){
+    private Link findNextShowAllLink(int page, int size, int totalRecords, String part, String tags, String name, String date){
+        int pages = Pagination.findPages(totalRecords, size);
+        int lastPage = Pagination.findLastPage(pages, size, totalRecords);
+        int nextPage = Pagination.findNextPage(page, lastPage);
+        return linkTo(methodOn(CertificateController.class)
+                .findAll(part, tags, name, date, nextPage, size))
+                .withRel("next").withType(HttpMethod.GET.name())
+                .expand().withName(String.valueOf(nextPage));
+    }
+
+    private Link findFirstPage(int page, int size, String part, String tags, String name, String date){
+        return linkTo(methodOn(CertificateController.class)
+                .findAll(part, tags, name, date, 1, size))
+                .withRel("first").withType(HttpMethod.GET.name()).expand().withName("1");
+    }
+
+    private Link findLastPage(int page, int size, int totalRecords, String part, String tags, String name, String date){
         int pages = Pagination.findPages(totalRecords, size);
         int lastPage = Pagination.findLastPage(pages, size, totalRecords);
         return linkTo(methodOn(CertificateController.class)
-                .showAll(Pagination.findNextPage(page, lastPage), size))
-                .withRel("next").withType(HttpMethod.GET.name());
+                .findAll(part, tags, name, date, lastPage, size))
+                .withRel("last").withType(HttpMethod.GET.name()).expand().withName(String.valueOf(lastPage));
     }
 }
