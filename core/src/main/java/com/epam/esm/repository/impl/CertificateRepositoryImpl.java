@@ -84,7 +84,6 @@ public class CertificateRepositoryImpl  implements QueryCertificateRepository {
 
         Query certificateQuery = entityManager.createNativeQuery(query, GiftCertificate.class)
                 .setMaxResults(limit).setFirstResult(offset);
-        System.out.println(query);
         return (List<GiftCertificate>) certificateQuery.getResultList();
     }
 

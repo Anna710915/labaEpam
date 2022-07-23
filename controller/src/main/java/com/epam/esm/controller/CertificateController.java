@@ -294,7 +294,7 @@ public class CertificateController {
     private Link findPrevShowAllLink(int page, int size, String part, String tags, String name, String date){
         return linkTo(methodOn(CertificateController.class)
                 .findAll(part, tags, name, date, Pagination.findPrevPage(page), size))
-                .withRel("prev").withType(HttpMethod.GET.name()).expand().withName(String.valueOf(page));
+                .withRel("prev").withType(HttpMethod.GET.name()).expand().withName(String.valueOf(page > 1 ? page - 1 : 1));
 
     }
 
@@ -311,7 +311,7 @@ public class CertificateController {
     private Link findFirstPage(int page, int size, String part, String tags, String name, String date){
         return linkTo(methodOn(CertificateController.class)
                 .findAll(part, tags, name, date, 1, size))
-                .withRel("first").withType(HttpMethod.GET.name()).expand().withName(String.valueOf(page));
+                .withRel("first").withType(HttpMethod.GET.name()).expand().withName("1");
     }
 
     private Link findLastPage(int page, int size, int totalRecords, String part, String tags, String name, String date){
@@ -319,6 +319,6 @@ public class CertificateController {
         int lastPage = Pagination.findLastPage(pages, size, totalRecords);
         return linkTo(methodOn(CertificateController.class)
                 .findAll(part, tags, name, date, lastPage, size))
-                .withRel("last").withType(HttpMethod.GET.name()).expand().withName(String.valueOf(page));
+                .withRel("last").withType(HttpMethod.GET.name()).expand().withName(String.valueOf(lastPage));
     }
 }
